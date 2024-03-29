@@ -9,11 +9,12 @@ const courseSchema = new mongoose.Schema(
       {
         module: { type: String },
         overview: { type: String },
-        video: { type: String },
-        lessonNote: { type: String },
+        lessonNoteTitle: { type: String },
+        lessonNoteContent: { type: String },
         assessment: [
           { question: { type: String }, answer: [{ type: Number }] },
         ],
+        video: { type: String },
       },
     ],
     createdBy: {

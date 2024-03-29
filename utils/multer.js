@@ -14,11 +14,33 @@ const uploadManager = (destination) => {
     storage: new CloudinaryStorage({
       cloudinary: cloudinary,
       params: {
-        folder: `Citifix/${destination}`,
+        folder: `TechLearn/${destination}`,
         quality: "auto:best",
       },
     }),
   })
 }
 
-module.exports = { uploadManager }
+const videoManager = (destination) => {
+  return multer({
+    storage: new CloudinaryStorage({
+      cloudinary: cloudinary,
+      params: {
+        folder: `TechLearn/module-video/${destination}`,
+        format: "mp4",
+        resource_type: "video",
+      },
+    }),
+    fileFilter,
+  })
+}
+
+function fileFilter(req, file, cb) {
+  if (req.get("Authorization") !== undefined) {
+    cb(null, true)
+  } else {
+    cb(null, true)
+  }
+}
+
+module.exports = { uploadManager, videoManager }

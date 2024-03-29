@@ -41,6 +41,48 @@ class CourseService {
       data: course,
     }
   }
+
+  static async updateCourse(payload, locals) {
+    const { image, body } = payload
+    const course = await CourseRepository.updateCourseDetails(
+      { _id: new mongoose.Types.ObjectId(locals) },
+      {
+        $push: { modules: { ...body, video: image } },
+      }
+    )
+
+    if (!course) return { success: false, msg: CourseFailure.UPDATE }
+
+    return { success: true, msg: CourseSuccess.UPDATE, data: course }
+  }
+
+  //update modules
+  static async updateCourseModule(payload, moduleId) {
+    // 6606cd43d5ed1a4ae37005a4
+    const { image, body } = payload
+
+    const course = await CourseRepository.updateCourseDetails(
+      { "modules._id": moduleId },
+      {
+        $set: {
+          "modules.$.module": body.module,
+          "modules.$.overview": body.overview,
+          "modules.$.lessonNoteTitle": body.lessonNoteTitle,
+          "modules.$.lessonNoteContent": body.lessonNoteContent,
+          "modules.$.assessment": body.assessment,
+          "modules.$.video": image,
+        },
+      }
+    )
+
+    if (!course)
+      return {
+        success: false,
+        msg: `Unable to update or possibly  wrong  module id`,
+      }
+
+    return { success: true, msg: CourseSuccess.UPDATE, data: course }
+  }
 }
 
 module.exports = { CourseService }

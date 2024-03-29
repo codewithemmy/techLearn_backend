@@ -30,7 +30,8 @@ class CourseRepository {
       {
         ...params,
       },
-      { ...payload }
+      { ...payload },
+      { new: true, runValidators: true }
     )
 
     return course
