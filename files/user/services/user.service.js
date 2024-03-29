@@ -1,0 +1,248 @@
+const mongoose = require("mongoose");
+const {
+  hashPassword,
+  tokenHandler,
+  verifyPassword,
+  sanitizePhoneNumber,
+  generateOtp,
+} = require("../../../utils");
+
+const { UserSuccess, UserFailure } = require("../user.messages");
+const { UserRepository } = require("../user.repository");
+const { sendMailNotification } = require("../../../utils/email");
+const { authMessages } = require("../../admin/messages/auth.messages");
+
+class UserService {
+  static async createUser(payload) {
+    const { email, phoneNumber, fullName } = payload;
+
+    const { phone } = sanitizePhoneNumber(phoneNumber);
+    const validateEmail = await UserRepository.validateUser({
+      $or: [{ email: email }, { phoneNumber: phone }],
+    });
+
+    if (validateEmail) return { success: false, msg: UserFailure.EXIST };
+
+    //hash password
+    const user = await UserRepository.create({
+      ...payload,
+      phoneNumber: phone,
+      password: await hashPassword(payload.password),
+    });
+
+    if (!user._id) return { success: false, msg: UserFailure.CREATE };
+
+    /** once the created send otp mail for verification, if accountType is citybuilder send otp to phone number*/
+    const substitutional_parameters = {
+      name: fullName,
+      email,
+    };
+
+    await sendMailNotification(
+      email,
+      "Tech-Learn Registration",
+      substitutional_parameters,
+      "REGISTRATION"
+    );
+
+    return {
+      success: true,
+      msg: UserSuccess.CREATE,
+    };
+  }
+
+  static async userLogin(payload) {
+    const { email, username, password } = payload;
+
+    const user = await UserRepository.findSingleUserWithParams({
+      email,
+      username,
+    });
+
+    if (!user) return { success: false, msg: UserFailure.VALID_USER };
+
+    if (!user.isVerified) return { success: false, msg: UserFailure.VERIFIED };
+
+    const isPassword = await verifyPassword(password, user.password);
+
+    if (!isPassword) return { success: false, msg: UserFailure.PASSWORD };
+
+    let token;
+
+    token = await tokenHandler({
+      isAdmin: false,
+      userType: "student",
+      _id: user._id,
+      fullName: user.fullName,
+      email: user.email,
+    });
+
+    //return result
+    return {
+      success: true,
+      msg: `Login Successful`,
+      data: { ...user, token },
+    };
+  }
+
+  static async forgotPassword(payload) {
+    const { email } = payload;
+
+    const user = await UserRepository.findSingleUserWithParams({ email });
+
+    if (!user) return { success: false, msg: UserFailure.USER_EXIST };
+
+    const { otp } = generateOtp();
+
+    //save otp to compare
+    user.verificationOtp = otp;
+    await user.save();
+
+    try {
+      /**send otp to email or phone number*/
+      const substitutional_parameters = {
+        resetOtp: otp,
+      };
+
+      await sendMailNotification(
+        email,
+        "TechLearn Reset OTP",
+        substitutional_parameters,
+        "RESET_OTP"
+      );
+    } catch (error) {
+      console.log("otp error", error);
+    }
+
+    return { success: true, msg: AuthSuccess.OTP_SENT };
+  }
+
+  static async resetPassword(body) {
+    const { newPassword, email, otp } = body;
+
+    const user = await UserRepository.findSingleUserWithParams({
+      email,
+      verificationOtp: otp,
+    });
+
+    if (!user) return { success: false, msg: UserFailure.OTP };
+
+    user.password = await hashPassword(newPassword);
+    user.verificationOtp = "";
+
+    const saveUser = await user.save();
+
+    if (!saveUser) return { success: false, msg: UserFailure.PASSWORD_RESET };
+
+    return { success: true, msg: UserFailure.PASSWORD_RESET };
+  }
+
+  /**For google login */
+  // static async authLoginService(payload) {
+  //   const { email } = payload;
+
+  //   const userProfile = await UserRepository.findSingleUserWithParams({
+  //     email: email,
+  //   });
+
+  //   if (!userProfile) return { success: false, msg: UserFailure.USER_EXIST };
+
+  //   if (userProfile.isVerified !== true)
+  //     return { success: false, msg: UserFailure.VERIFIED };
+
+  //   //confirm if user has been deleted
+  //   if (userProfile.isDelete)
+  //     return { success: false, msg: UserFailure.SOFT_DELETE };
+
+  //   if (!userProfile) return { success: false, msg: UserFailure.USER_FOUND };
+
+  //   let token;
+
+  //   token = await tokenHandler({
+  //     _id: userProfile._id,
+  //     firstName: userProfile.firstName,
+  //     lastName: userProfile.lastName,
+  //     email: userProfile.email,
+  //     isAdmin: false,
+  //   });
+
+  //   const user = {
+  //     _id: userProfile._id,
+  //     firstName: userProfile.firstName,
+  //     lastName: userProfile.lastName,
+  //     email: userProfile.email,
+  //     accountType: userProfile.accountType,
+  //     status: userProfile.status,
+  //     ...token,
+  //   };
+
+  //   //return result
+  //   return {
+  //     success: true,
+  //     msg: UserSuccess.FETCH,
+  //     data: user,
+  //   };
+  // }
+
+  // static async authCreateUserService(payload) {
+  //   const { firstName, lastName, email, accountType } = payload;
+
+  //   const userExist = await UserRepository.validateUser({
+  //     email: payload.email,
+  //   });
+
+  //   if (userExist) return { success: false, msg: UserFailure.EXIST };
+
+  //   //hash password
+  //   const user = await UserRepository.create({
+  //     firstName,
+  //     lastName,
+  //     email,
+  //     accountType,
+  //     isVerified: true,
+  //   });
+
+  //   if (!user._id) return { success: false, msg: UserFailure.CREATE };
+
+  //   /** once the created send otp mail for verification, if accountType is citybuilder send otp to phone number*/
+  //   const substitutional_parameters = {
+  //     name: lastName,
+  //   };
+
+  //   await sendMailNotification(
+  //     email,
+  //     "Sign-Up",
+  //     substitutional_parameters,
+  //     "GOOGLE_SIGNUP"
+  //   );
+
+  //   let token;
+
+  //   token = await tokenHandler({
+  //     _id: user._id,
+  //     firstName: user.firstName,
+  //     lastName: user.lastName,
+  //     email: user.email,
+  //     isAdmin: false,
+  //   });
+
+  //   const loginDetails = {
+  //     _id: user._id,
+  //     firstName: user.firstName,
+  //     lastName: user.lastName,
+  //     email: user.email,
+  //     accountType: user.accountType,
+  //     status: user.status,
+  //     ...token,
+  //   };
+
+  //   //return result
+  //   return {
+  //     success: true,
+  //     msg: UserSuccess.CREATE,
+  //     data: loginDetails,
+  //   };
+  // }
+}
+
+module.exports = { UserService };
