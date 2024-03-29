@@ -1,73 +1,87 @@
-const mongoose = require("mongoose");
+const mongoose = require("mongoose")
 const {
   hashPassword,
   tokenHandler,
   verifyPassword,
   sanitizePhoneNumber,
   generateOtp,
-} = require("../../../utils");
+  AlphaNumeric,
+} = require("../../../utils")
 
-const { UserSuccess, UserFailure } = require("../user.messages");
-const { UserRepository } = require("../user.repository");
-const { sendMailNotification } = require("../../../utils/email");
-const { authMessages } = require("../../admin/messages/auth.messages");
+const { UserSuccess, UserFailure } = require("../user.messages")
+const { UserRepository } = require("../user.repository")
+const { sendMailNotification } = require("../../../utils/email")
+const { authMessages } = require("../../admin/messages/auth.messages")
+const { AuthSuccess } = require("../../auth/auth.messages")
 
 class UserService {
   static async createUser(payload) {
-    const { email, phoneNumber, fullName } = payload;
+    const { email, fullName } = payload
+    let validateEmail
 
-    const { phone } = sanitizePhoneNumber(phoneNumber);
-    const validateEmail = await UserRepository.validateUser({
-      $or: [{ email: email }, { phoneNumber: phone }],
-    });
+    // const { phone } = sanitizePhoneNumber(phoneNumber)
+    validateEmail = await UserRepository.validateUser({
+      $or: [{ email: email }],
+    })
 
-    if (validateEmail) return { success: false, msg: UserFailure.EXIST };
+    let randomOtp = AlphaNumeric(4, "number")
+
+    if (validateEmail) return { success: false, msg: UserFailure.EXIST }
 
     //hash password
     const user = await UserRepository.create({
       ...payload,
-      phoneNumber: phone,
       password: await hashPassword(payload.password),
-    });
+      emailVerificationOtp: await hashPassword(randomOtp),
+    })
 
-    if (!user._id) return { success: false, msg: UserFailure.CREATE };
+    if (!user._id) return { success: false, msg: UserFailure.CREATE }
 
-    /** once the created send otp mail for verification, if accountType is citybuilder send otp to phone number*/
-    const substitutional_parameters = {
-      name: fullName,
-      email,
-    };
+    try {
+      /** once the created send otp mail for verification, if accountType is citybuilder send otp to phone number*/
+      const substitutional_parameters = {
+        name: fullName,
+        email,
+      }
 
-    await sendMailNotification(
-      email,
-      "Tech-Learn Registration",
-      substitutional_parameters,
-      "REGISTRATION"
-    );
+      await sendMailNotification(
+        email,
+        "Tech-Learn Registration",
+        substitutional_parameters,
+        "REGISTRATION"
+      )
+    } catch (error) {
+      console.log("error", error)
+    }
+
+    const token = await tokenHandler({
+      _id: user._id,
+    })
 
     return {
       success: true,
       msg: UserSuccess.CREATE,
-    };
+      data: token,
+    }
   }
 
   static async userLogin(payload) {
-    const { email, username, password } = payload;
+    const { email, username, password } = payload
 
     const user = await UserRepository.findSingleUserWithParams({
       email,
       username,
-    });
+    })
 
-    if (!user) return { success: false, msg: UserFailure.VALID_USER };
+    if (!user) return { success: false, msg: UserFailure.VALID_USER }
 
-    if (!user.isVerified) return { success: false, msg: UserFailure.VERIFIED };
+    if (!user.isVerified) return { success: false, msg: UserFailure.VERIFIED }
 
-    const isPassword = await verifyPassword(password, user.password);
+    const isPassword = await verifyPassword(password, user.password)
 
-    if (!isPassword) return { success: false, msg: UserFailure.PASSWORD };
+    if (!isPassword) return { success: false, msg: UserFailure.PASSWORD }
 
-    let token;
+    let token
 
     token = await tokenHandler({
       isAdmin: false,
@@ -75,66 +89,122 @@ class UserService {
       _id: user._id,
       fullName: user.fullName,
       email: user.email,
-    });
+    })
 
     //return result
     return {
       success: true,
       msg: `Login Successful`,
-      data: { ...user, token },
-    };
+      data: { user, ...token },
+    }
   }
 
   static async forgotPassword(payload) {
-    const { email } = payload;
+    const { email } = payload
 
-    const user = await UserRepository.findSingleUserWithParams({ email });
+    const user = await UserRepository.findSingleUserWithParams({ email })
 
-    if (!user) return { success: false, msg: UserFailure.USER_EXIST };
+    if (!user) return { success: false, msg: UserFailure.USER_EXIST }
 
-    const { otp } = generateOtp();
+    const { otp } = generateOtp()
 
     //save otp to compare
-    user.verificationOtp = otp;
-    await user.save();
+    user.verificationOtp = otp
+    await user.save()
 
     try {
       /**send otp to email or phone number*/
       const substitutional_parameters = {
         resetOtp: otp,
-      };
+      }
 
       await sendMailNotification(
         email,
         "TechLearn Reset OTP",
         substitutional_parameters,
         "RESET_OTP"
-      );
+      )
     } catch (error) {
-      console.log("otp error", error);
+      console.log("otp error", error)
     }
 
-    return { success: true, msg: AuthSuccess.OTP_SENT };
+    return { success: true, msg: AuthSuccess.OTP_SENT }
   }
 
   static async resetPassword(body) {
-    const { newPassword, email, otp } = body;
+    const { newPassword, email, otp } = body
 
     const user = await UserRepository.findSingleUserWithParams({
       email,
       verificationOtp: otp,
-    });
+    })
 
-    if (!user) return { success: false, msg: UserFailure.OTP };
+    if (!user) return { success: false, msg: UserFailure.OTP }
 
-    user.password = await hashPassword(newPassword);
-    user.verificationOtp = "";
+    user.password = await hashPassword(newPassword)
+    user.verificationOtp = ""
 
-    const saveUser = await user.save();
+    const saveUser = await user.save()
 
-    if (!saveUser) return { success: false, msg: UserFailure.PASSWORD_RESET };
+    if (!saveUser) return { success: false, msg: UserFailure.PASSWORD_RESET }
 
-    return { success: true, msg: UserFailure.PASSWORD_RESET };
+    return { success: true, msg: UserSuccess.PASSWORD_RESET }
+  }
+
+  static async resendOtp(payload) {
+    const { email } = payload
+
+    const user = await UserRepository.findSingleUserWithParams({ email })
+
+    if (!user) return { success: false, msg: UserFailure.USER_EXIST }
+
+    let randomOtp = AlphaNumeric(4, "number")
+
+    const newOtp = await hashPassword(randomOtp)
+
+    //save otp to compare
+    user.emailVerificationOtp = newOtp
+    await user.save()
+
+    try {
+      /**send otp to email or phone number*/
+      const substitutional_parameters = {
+        resetOtp: randomOtp,
+      }
+
+      await sendMailNotification(
+        email,
+        "TechLearn Reset OTP",
+        substitutional_parameters,
+        "EMAIL_OTP"
+      )
+    } catch (error) {
+      console.log("otp error", error)
+    }
+
+    return { success: true, msg: AuthSuccess.OTP_SENT }
+  }
+
+  static async verifyUserEmail(body) {
+    const { email, otp } = body
+
+    const user = await UserRepository.findSingleUserWithParams({
+      email,
+    })
+
+    if (!user) return { success: false, msg: UserFailure.OTP }
+
+    const verifyOtp = await verifyPassword(otp, user.emailVerificationOtp)
+
+    if (!verifyOtp) return { success: false, msg: `Incorrect Otp` }
+
+    user.emailVerificationOtp = ""
+    user.isVerified = true
+    const saveUser = await user.save()
+
+    if (!saveUser) return { success: false, msg: `Unable to verify user email` }
+
+    return { success: true, msg: `User email verified successfully` }
   }
 
   /**For google login */
@@ -245,4 +315,4 @@ class UserService {
   // }
 }
 
-module.exports = { UserService };
+module.exports = { UserService }

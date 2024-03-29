@@ -1,41 +1,32 @@
-const { uploadManager } = require("../../utils/multer");
-const { checkSchema } = require("express-validator");
-const {
-  createUserValidation,
-} = require("../../validations/users/createUser.validation");
-const { validate } = require("../../validations/validate");
-const userRoute = require("express").Router();
-const { isAuthenticated } = require("../../utils");
+// const { uploadManager } = require("../../utils/multer")
+// const { checkSchema } = require("express-validator")
+// const { validate } = require("../../validations/validate")
+const userRoute = require("express").Router()
+// const { isAuthenticated } = require("../../utils")
 
 //controller files
 const {
   createUserController,
   userLoginController,
-} = require("../user/controllers/user.controller");
-
-//profile
-const {
-  profileImageController,
-} = require("../user/controllers/profile.controller");
-const {} = require("../review/review.controller");
-const {
-  loginUserValidation,
-} = require("../../validations/users/loginUser.Validation");
-const {} = require("../../validations/review/createReview.validation");
+  forgotPasswordController,
+  resetPasswordController,
+  verifyUserController,
+  resendOtpController,
+} = require("../user/controllers/user.controller")
 
 //routes
-userRoute
-  .route("/")
-  .post(validate(checkSchema(createUserValidation)), createUserController);
-userRoute
-  .route("/login")
-  .post(validate(checkSchema(loginUserValidation)), userLoginController);
+userRoute.route("/").post(createUserController)
+userRoute.route("/login").post(userLoginController)
+userRoute.route("/forgot-password").post(forgotPasswordController)
+userRoute.route("/reset-password").post(resetPasswordController)
+userRoute.route("/verify").post(verifyUserController)
+userRoute.route("/resend-otp").post(resendOtpController)
 
-userRoute.use(isAuthenticated);
+// userRoute.use(isAuthenticated)
 
 //profile route
-userRoute
-  .route("/image/upload")
-  .put(uploadManager("profileImage").single("image"), profileImageController);
+// userRoute
+//   .route("/image/upload")
+//   .put(uploadManager("profileImage").single("image"), profileImageController)
 
-module.exports = userRoute;
+module.exports = userRoute

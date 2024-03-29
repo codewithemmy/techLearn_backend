@@ -37,6 +37,9 @@ const userSchema = new mongoose.Schema(
     verificationOtp: {
       type: String,
     },
+    emailVerificationOtp: {
+      type: String,
+    },
   },
   { timestamps: true }
 )

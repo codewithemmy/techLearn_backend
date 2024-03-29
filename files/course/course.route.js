@@ -18,6 +18,7 @@ courseRoute
 courseRoute
   .route("/:id")
   .patch(videoManager("courseImage").single("video"), updateCourseController)
+  
 courseRoute
   .route("/:id")
   .patch(videoManager("courseImage").single("video"), updateCourseController)
