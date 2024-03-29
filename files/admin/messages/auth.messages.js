@@ -8,8 +8,7 @@ module.exports.authMessages = {
   ADMIN_NOT_FOUND: "Admin not found",
 
   ADMIN_FOUND: "Admin successfully fetched",
-  ADMIN_CREATED:
-    "Admin successfully created, check your email for verification code",
+  ADMIN_CREATED: "Admin successfully created",
   ADMIN_EXISTS: "Admin already exists",
 
   PASSWORD_RESET_SUCCESS: "Password successfully reset",
@@ -21,4 +20,4 @@ module.exports.authMessages = {
   USER_NOT_FOUND: "user not found",
   USER_FOUND: "user found",
   DISABLED: "User Successfully disabled",
-};
+}

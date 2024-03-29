@@ -1,50 +1,49 @@
-const mongoose = require("mongoose");
-const { AdminRepository } = require("./admin.repository");
+const mongoose = require("mongoose")
+const { AdminRepository } = require("./admin.repository")
 const {
   hashPassword,
   verifyPassword,
   tokenHandler,
   queryConstructor,
-} = require("../../utils/index");
-const { authMessages } = require("./messages/auth.messages");
-const { adminMessages } = require("./messages/admin.messages");
-const { UserRepository } = require("../user/user.repository");
+} = require("../../utils/index")
+const { authMessages } = require("./messages/auth.messages")
+const { adminMessages } = require("./messages/admin.messages")
+const { UserRepository } = require("../user/user.repository")
 
 class AdminAuthService {
   static async adminSignUpService(body) {
     const admin = await AdminRepository.fetchAdmin({
       email: body.email,
-    });
+    })
 
     if (admin) {
-      return { success: false, msg: authMessages.ADMIN_EXISTS };
+      return { success: false, msg: authMessages.ADMIN_EXISTS }
     }
 
-    const password = await hashPassword(body.password);
-    const signUp = await AdminRepository.create({ ...body, password });
+    const password = await hashPassword(body.password)
+    const signUp = await AdminRepository.create({ ...body, password })
 
-    if (signUp._id)
-      return { success: false, msg: authMessages.ADMIN_NOT_CREATED };
+    if (!signUp._id)
+      return { success: false, msg: authMessages.ADMIN_NOT_CREATED }
 
-    return { success: true, msg: authMessages.ADMIN_CREATED };
+    return { success: true, msg: authMessages.ADMIN_CREATED }
   }
 
   static async adminLoginService(body) {
     const admin = await AdminRepository.fetchAdmin({
       email: body.email,
-    });
+    })
 
-    if (!admin) {
+    if (!admin)
       return {
         success: false,
         msg: authMessages.LOGIN_ERROR,
-      };
-    }
+      }
 
-    const passwordCheck = await verifyPassword(body.password, admin.password);
+    const passwordCheck = await verifyPassword(body.password, admin.password)
 
     if (!passwordCheck) {
-      return { success: false, msg: authMessages.LOGIN_ERROR };
+      return { success: false, msg: authMessages.LOGIN_ERROR }
     }
 
     const token = await tokenHandler({
@@ -54,14 +53,14 @@ class AdminAuthService {
       accountType: admin.role,
       status: admin.status,
       isAdmin: true,
-    });
+    })
 
     // admin.password = undefined
     return {
       success: true,
       msg: authMessages.ADMIN_FOUND,
       data: { admin, ...token },
-    };
+    }
   }
 
   static async getAdminService(adminPayload) {
@@ -69,43 +68,43 @@ class AdminAuthService {
       adminPayload,
       "createdAt",
       "Admin"
-    );
-    if (error) return { success: false, msg: error };
+    )
+    if (error) return { success: false, msg: error }
 
     const getAdmin = await AdminRepository.findAdminParams({
       ...params,
       limit,
       skip,
       sort,
-    });
+    })
 
     if (getAdmin.length < 1)
-      return { success: false, msg: authMessages.ADMIN_NOT_FOUND };
+      return { success: false, msg: authMessages.ADMIN_NOT_FOUND }
 
-    return { success: true, msg: authMessages.ADMIN_FOUND, data: getAdmin };
+    return { success: true, msg: authMessages.ADMIN_FOUND, data: getAdmin }
   }
 
   static async updateAdminService(data, id) {
-    const { body, image } = data;
+    const { body, image } = data
 
     const admin = await AdminRepository.updateAdminDetails(
       { _id: new mongoose.Types.ObjectId(id) },
       { ...body, image }
-    );
+    )
 
-    delete admin.password;
+    delete admin.password
 
     if (!admin)
       return {
         success: false,
         msg: adminMessages.UPDATE_PROFILE_FAILURE,
-      };
+      }
 
     return {
       success: true,
       msg: adminMessages.UPDATE_PROFILE_SUCCESS,
       admin,
-    };
+    }
   }
 
   // static async changePassword(body) {
@@ -177,15 +176,15 @@ class AdminAuthService {
   // }
 
   static async getLoggedInAdminService(adminPayload) {
-    const { _id } = adminPayload;
+    const { _id } = adminPayload
     const getAdmin = await AdminRepository.fetchAdmin({
       _id: new mongoose.Types.ObjectId(_id),
-    });
+    })
 
-    if (!getAdmin) return { success: false, msg: authMessages.ADMIN_NOT_FOUND };
+    if (!getAdmin) return { success: false, msg: authMessages.ADMIN_NOT_FOUND }
 
-    return { success: true, msg: authMessages.ADMIN_FOUND, data: getAdmin };
+    return { success: true, msg: authMessages.ADMIN_FOUND, data: getAdmin }
   }
 }
 
-module.exports = { AdminAuthService };
+module.exports = { AdminAuthService }
