@@ -52,6 +52,7 @@ class AdminAuthService {
       accountType: admin.accountType,
       accountType: admin.role,
       status: admin.status,
+      role: admin.role,
       isAdmin: true,
     })
 
