@@ -13,21 +13,16 @@ courseRoute.use(isAuthenticated)
 //routes
 courseRoute
   .route("/")
-  .post(videoManager("courseImage").single("video"), createCourseController)
+  .post(videoManager("courseVideo").single("video"), createCourseController)
 
 courseRoute
   .route("/:id")
-  .patch(videoManager("courseImage").single("video"), updateCourseController)
-  
-courseRoute
-  .route("/:id")
-  .patch(videoManager("courseImage").single("video"), updateCourseController)
+  .patch(videoManager("courseVideo").single("video"), updateCourseController)
 
-//update module route
 courseRoute
   .route("/module/:id")
   .patch(
-    videoManager("courseImage").single("video"),
+    videoManager("courseVideo").single("video"),
     updateCourseModuleController
   )
 
