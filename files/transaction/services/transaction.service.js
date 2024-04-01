@@ -10,6 +10,9 @@ const { UserRepository } = require("../../user/user.repository")
 
 const { TransactionRepository } = require("../transaction.repository")
 const { queryConstructor } = require("../../../utils")
+const {
+  SubscriptionPlanRepository,
+} = require("../../subscription_plan/subscriptionPlan.repository")
 
 class TransactionService {
   static paymentProvider
@@ -19,11 +22,18 @@ class TransactionService {
   }
 
   static async initiatePaymentTransaction(payload) {
-    const { userId, email, amount, subscriptionPlanId, extras = {} } = payload
+    const { userId, email, subscriptionPlanId, extras = {} } = payload
 
     const user = await UserRepository.findSingleUserWithParams({
       _id: new mongoose.Types.ObjectId(userId),
     })
+
+    const subscriptionPlan = await SubscriptionPlanRepository.fetchOne({
+      _id: new mongoose.Types.ObjectId(subscriptionPlanId),
+    })
+
+    if (!subscriptionPlan)
+      return { success: false, msg: `Invalid subscription id` }
 
     if (!user)
       return { success: false, msg: `Invalid user for payment initiation` }
@@ -31,7 +41,7 @@ class TransactionService {
     await this.getConfig()
     const paymentDetails = await this.paymentProvider.initiatePayment({
       email,
-      amount,
+      amount: subscriptionPlan.amount,
     })
 
     if (!paymentDetails.success)
@@ -39,7 +49,7 @@ class TransactionService {
 
     const transaction = await TransactionRepository.create({
       userId,
-      amount,
+      amount: subscriptionPlan.amount,
       subscriptionPlanId: new mongoose.Types.ObjectId(subscriptionPlanId),
       reference: paymentDetails.data.reference,
       channel: "paystack",
