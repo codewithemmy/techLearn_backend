@@ -1,5 +1,6 @@
 module.exports.TransactionSuccess = {
   INITIATE: "Successfully initiated transaction",
+  UPDATE: "transaction status updated",
 }
 
 module.exports.TransactionFailure = {
@@ -17,5 +18,4 @@ module.exports.TransactionMessages = {
   DUPLICATE_CARD: "Card already exists",
   PAYMENT_SUCCESS: "Payment successfully verified",
   PAYMENT_FAILURE: "Payment not verified",
-  TOTAL_LOAN: "User details fetched with total loan amount",
 }

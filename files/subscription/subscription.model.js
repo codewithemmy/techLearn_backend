@@ -7,7 +7,7 @@ const subscriptionSchema = new mongoose.Schema(
       ref: "User",
       required: true,
     },
-    subscriptionId: {
+    subscriptionPanId: {
       type: mongoose.Types.ObjectId,
       ref: "SubscriptionPlan",
       required: true,
@@ -26,7 +26,7 @@ const subscriptionSchema = new mongoose.Schema(
       default: "in-progress",
     },
     expiresAt: {
-      type: Number,
+      type: Date,
     },
   },
   { timestamps: true }

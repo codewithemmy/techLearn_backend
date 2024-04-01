@@ -29,7 +29,7 @@ class SubscriptionPlanRepository {
     return SubscriptionPlan.find({ ...payload }).select(select)
   }
 
-  static async update(params, payload) {
+  static async updateSubscriptionPlanDetails(params, payload) {
     return await SubscriptionPlan.findOneAndUpdate(
       { ...params },
       { ...payload },

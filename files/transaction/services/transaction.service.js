@@ -1,17 +1,15 @@
-const mongoose = require("mongoose")
+const { default: mongoose } = require("mongoose")
 const {
   PaystackPaymentService,
 } = require("../../../providers/paystack/paystack")
 const {
   TransactionFailure,
   TransactionSuccess,
-  TransactionMessages,
 } = require("../transaction.messages")
-const { TransactionRepository } = require("../transaction.repository")
 const { UserRepository } = require("../../user/user.repository")
-const {
-  SubscriptionRepository,
-} = require("../../subscription/subscription.repository")
+
+const { TransactionRepository } = require("../transaction.repository")
+const { queryConstructor } = require("../../../utils")
 
 class TransactionService {
   static paymentProvider
@@ -21,26 +19,18 @@ class TransactionService {
   }
 
   static async initiatePaymentTransaction(payload) {
-    const { userId, amount, subscriptionId } = payload
-    let currentDate = new Date()
+    const { userId, email, amount, subscriptionPlanId, extras = {} } = payload
+
     const user = await UserRepository.findSingleUserWithParams({
       _id: new mongoose.Types.ObjectId(userId),
     })
 
-    if (!user) return { success: false, msg: `Invalid User` }
-
-    if (user.subExpiryDate && user.subExpiryDate > currentDate)
-      return { success: false, msg: `User has an existing subscription` }
-
-    const subscription = await SubscriptionRepository.findSingleSubscription({
-      _id: new mongoose.Types.ObjectId(subscriptionId),
-    })
-
-    if (!subscription) return { success: false, msg: `Invalid subscription Id` }
+    if (!user)
+      return { success: false, msg: `Invalid user for payment initiation` }
 
     await this.getConfig()
     const paymentDetails = await this.paymentProvider.initiatePayment({
-      email: user.email,
+      email,
       amount,
     })
 
@@ -48,13 +38,12 @@ class TransactionService {
       return { success: false, msg: TransactionFailure.INITIATE }
 
     const transaction = await TransactionRepository.create({
-      userId: user._id,
-      userType: "User",
-      email: user.email,
+      userId,
       amount,
-      subscriptionId,
+      subscriptionPlanId: new mongoose.Types.ObjectId(subscriptionPlanId),
       reference: paymentDetails.data.reference,
       channel: "paystack",
+      ...extras,
     })
 
     if (!transaction._id)
@@ -69,9 +58,39 @@ class TransactionService {
     }
   }
 
+  static async getTransactionService(payload) {
+    const { error, params, limit, skip, sort } = queryConstructor(
+      payload,
+      "createdAt",
+      "Transaction"
+    )
+    if (error) return { success: false, msg: error }
+
+    const transaction = await TransactionRepository.fetchTransactionsByParams({
+      ...params,
+      limit,
+      skip,
+      sort,
+    })
+
+    if (transaction.length < 1)
+      return { success: false, msg: `Transaction currently empty` }
+
+    return {
+      success: true,
+      msg: `transaction fetched successfully`,
+      data: transaction,
+    }
+  }
+
   static async verifyCardPayment(payload) {
     await this.getConfig()
     return this.paymentProvider.verifyCardPayment(payload)
+  }
+
+  static async verifyPaymentManually(payload) {
+    await this.getConfig()
+    return this.paymentProvider.verifyProviderPayment(payload.reference)
   }
 }
 

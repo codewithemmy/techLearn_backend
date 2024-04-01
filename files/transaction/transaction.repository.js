@@ -6,9 +6,21 @@ class TransactionRepository {
   }
 
   static async fetchOne(payload) {
-    return Transaction.findOne({ ...payload }).populate({
-      path: "subscriptionId",
+    return Transaction.findOne({ ...payload })
+  }
+
+  static async fetchTransactionsByParams(userPayload, select) {
+    const { limit, skip, sort, ...restOfPayload } = userPayload
+    const transaction = await Transaction.find({
+      ...restOfPayload,
     })
+      .populate("subscriptionId")
+      .sort(sort)
+      .skip(skip)
+      .limit(limit)
+      .select(select)
+
+    return transaction
   }
 
   static async fetch(payload, select) {
@@ -16,15 +28,13 @@ class TransactionRepository {
   }
 
   static async updateTransactionDetails(transactionPayload, update) {
-    const transaction = await Transaction.findOneAndUpdate(
+    return await Transaction.findOneAndUpdate(
       {
         ...transactionPayload,
       },
       { ...update },
-      { new: true, runValidation: true } //returns details about the update
+      { new: true, runValidators: true }
     )
-
-    return transaction
   }
 }
 

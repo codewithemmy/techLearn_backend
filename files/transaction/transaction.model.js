@@ -2,17 +2,13 @@ const mongoose = require("mongoose")
 
 const TransactionSchema = new mongoose.Schema(
   {
-    userType: {
-      type: String,
-      required: true,
-    },
     userId: {
       type: mongoose.Types.ObjectId,
-      refPath: "userType",
+      ref: "User",
     },
-    subscriptionId: {
+    subscriptionPlanId: {
       type: mongoose.Types.ObjectId,
-      ref: "Subscription",
+      ref: "SubscriptionPlanId",
     },
     amount: {
       type: Number,
@@ -20,15 +16,10 @@ const TransactionSchema = new mongoose.Schema(
     },
     channel: {
       type: String,
-      required: true,
       enum: ["paystack", "bank"],
+      default: "paystack",
     },
-    paymentFor: {
-      type: String,
-      required: true,
-      enum: ["UserBoost"],
-      default: "UserBoost",
-    },
+    bankName: { type: String },
     reference: {
       type: String,
       required: true,
@@ -38,7 +29,10 @@ const TransactionSchema = new mongoose.Schema(
       enum: ["pending", "confirmed", "failed"],
       default: "pending",
     },
-    bankName: String,
+    paymentFor: {
+      type: String,
+      enum: ["standard", "premium"],
+    },
     metaData: String,
   },
   { timestamps: true }

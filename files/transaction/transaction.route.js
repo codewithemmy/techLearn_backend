@@ -1,26 +1,18 @@
 const transactionRoute = require("express").Router()
-const { checkSchema } = require("express-validator")
-const {
-  createTransactionValidation,
-} = require("../../validations/transaction/createTransaction.validation")
 
-const { validate } = require("../../validations/validate")
 const { isAuthenticated } = require("../../utils")
 const {
   paymentTransactionController,
   paystackWebHook,
+  verifyTransactionController,
 } = require("./controller/transaction.controller")
 
 transactionRoute.post("/paystack-webhook", paystackWebHook)
 
 transactionRoute.use(isAuthenticated)
 
-transactionRoute
-  .route("/initiate")
-  .post(
-    validate(checkSchema(createTransactionValidation)),
-    paymentTransactionController
-  )
+transactionRoute.post("/initiate", paymentTransactionController)
+transactionRoute.post("/verify", verifyTransactionController)
 
 //routes
 module.exports = transactionRoute

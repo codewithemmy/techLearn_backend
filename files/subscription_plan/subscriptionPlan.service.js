@@ -50,12 +50,13 @@ class SubscriptionPlanService {
 
   static async updateSubscriptionPlan(data) {
     const { body, params } = data
-    const subscriptionPlan = await SubscriptionPlanRepository.update(
-      {
-        _id: new mongoose.Types.ObjectId(params.id),
-      },
-      { ...body }
-    )
+    const subscriptionPlan =
+      await SubscriptionPlanRepository.updateSubscriptionPlanDetails(
+        {
+          _id: new mongoose.Types.ObjectId(params.id),
+        },
+        { ...body }
+      )
 
     if (!subscriptionPlan)
       return { success: false, msg: SubscriptionPlanMessages.UPDATE_ERROR }
@@ -68,10 +69,11 @@ class SubscriptionPlanService {
 
   static async deleteSubscriptionPlan(data) {
     const { params } = data
-    const subscriptionPlan = await SubscriptionPlanRepository.update(
-      { _id: new mongoose.Types.ObjectId(params.id) },
-      { isDeleted: true }
-    )
+    const subscriptionPlan =
+      await SubscriptionPlanRepository.updateSubscriptionPlanDetails(
+        { _id: new mongoose.Types.ObjectId(params.id) },
+        { isDeleted: true }
+      )
 
     if (!subscriptionPlan)
       return { success: false, msg: SubscriptionPlanMessages.UPDATE_ERROR }

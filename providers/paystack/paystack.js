@@ -1,6 +1,5 @@
 const mongoose = require("mongoose")
 const { config } = require("../../core/config")
-
 const {
   TransactionMessages,
 } = require("../../files/transaction/transaction.messages")
@@ -11,9 +10,11 @@ const {
 const RequestHandler = require("../../utils/axios.provision")
 const { providerMessages } = require("../providers.messages")
 const {
-  NotificationService,
-} = require("../../files/notification/notification.service")
-const { UserRepository } = require("../../files/user/user.repository")
+  SubscriptionPlanRepository,
+} = require("../../files/subscription_plan/subscriptionPlan.repository")
+const {
+  SubscriptionRepository,
+} = require("../../files/subscription/subscription.repository")
 
 class PaystackPaymentService {
   paymentRequestHandler = RequestHandler.setup({
@@ -66,7 +67,7 @@ class PaystackPaymentService {
       method: "POST",
       url: "/transaction/initialize",
       data: {
-        amount,
+        amount: amount,
         email,
       },
     })
@@ -110,39 +111,44 @@ class PaystackPaymentService {
       return { success: false, msg: verifyAndUpdateTransactionRecord.msg }
     }
 
-    if (!verifyAndUpdateTransactionRecord.success) {
-      await NotificationService.create({
-        userId: new mongoose.Types.ObjectId(transaction.userId),
-        recipient: "Admin",
-        message: `Unconfirmed/failed payment of ${data.amount}`,
-        title: "Payment",
-      })
-      return { success: false, msg: TransactionMessages.PAYMENT_FAILURE }
-    }
-
-    //if payment is successful, create a notification for the user
-    await NotificationService.create({
-      userId: new mongoose.Types.ObjectId(transaction.userId),
-      recipient: "Admin",
-      message: `Successful payment of ${data.amount}`,
-      title: "Payment",
+    //get and confirm if the subscription plan exist
+    const subscriptionPlan = await SubscriptionPlanRepository.fetchOne({
+      _id: new mongoose.Types.ObjectId(transaction.subscriptionPlanId),
     })
 
-    let currentDate = new Date()
-    currentDate.setDate(
-      currentDate.getDate() + transaction.subscriptionId.duration
+    //create a check or date when subscription will expire
+    const currentDate = new Date()
+    const futureDate = new Date(
+      currentDate.getTime() + subscriptionPlan.duration * 24 * 60 * 60 * 1000
     )
+    const futureDateISOString = futureDate.toISOString()
 
-    const user = await UserRepository.findSingleUserWithParams({
-      _id: new mongoose.Types.ObjectId(transaction.userId),
+    //create a subscription since webhook is successful
+    await SubscriptionRepository.create({
+      userId: new mongoose.Types.ObjectId(transaction.userId),
+      subscriptionPanId: new mongoose.Types.ObjectId(
+        transaction.subscriptionPlanId
+      ),
+      transactionId: new mongoose.Types.ObjectId(subscriptionPlan._id),
+      status: "active",
+      isConfirmed: true,
+      expiresAt: futureDateISOString,
     })
-
-    if (!user) return { success: false, msg: `Payment made by invalid user` }
-
-    user.subExpiryDate = currentDate
-    await user.save()
 
     return { success: true, msg: TransactionMessages.PAYMENT_SUCCESS }
+  }
+
+  async verifyProviderPayment(reference) {
+    const { data: response } = await this.paymentRequestHandler({
+      method: "GET",
+      url: `/transaction/verify/${reference}`,
+    })
+
+    if (response.status && response.message == "Verification successful") {
+      return this.verifyCardPayment(response)
+    }
+
+    return { success: false, msg: response.message }
   }
 }
 
