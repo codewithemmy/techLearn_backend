@@ -111,16 +111,12 @@ class PaystackPaymentService {
     if (!verifyAndUpdateTransactionRecord.success) {
       return { success: false, msg: verifyAndUpdateTransactionRecord.msg }
     }
-    console.log("verifyAndUpdateTransactionRecord")
-    console.log(
-      "transaction.subscriptionPlanId",
-      transaction.subscriptionPlanId
-    )
+
     //get and confirm if the subscription plan exist
     const subscriptionPlan = await SubscriptionPlanRepository.fetchOne({
       _id: new mongoose.Types.ObjectId(transaction.subscriptionPlanId),
     })
-    console.log("subscriptionPlan", subscriptionPlan)
+
     //create a check or date when subscription will expire
     const currentDate = new Date()
     const futureDate = new Date(
@@ -128,8 +124,11 @@ class PaystackPaymentService {
     )
     const futureDateISOString = futureDate.toISOString()
 
+    console.log("futureDate", futureDate)
+    console.log("futureDateISOString", futureDateISOString)
+
     //create a subscription since webhook is successful
-    const subscription = await SubscriptionRepository.create({
+    await SubscriptionRepository.create({
       userId: new mongoose.Types.ObjectId(transaction.userId),
       subscriptionPanId: new mongoose.Types.ObjectId(
         transaction.subscriptionPlanId
@@ -139,8 +138,6 @@ class PaystackPaymentService {
       isConfirmed: true,
       expiresAt: futureDateISOString,
     })
-
-    console.log("subscription", subscription)
 
     return { success: true, msg: TransactionMessages.PAYMENT_SUCCESS }
   }
