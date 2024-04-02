@@ -33,6 +33,7 @@ class PaystackPaymentService {
   }
 
   async verifySuccessOfPayment(payload) {
+    console.log("verifySuccessOfPayment")
     const statusVerification = this.checkSuccessStatus(
       payload.status,
       payload.gateway_response
@@ -110,7 +111,11 @@ class PaystackPaymentService {
     if (!verifyAndUpdateTransactionRecord.success) {
       return { success: false, msg: verifyAndUpdateTransactionRecord.msg }
     }
-
+    console.log("verifyAndUpdateTransactionRecord")
+    console.log(
+      "transaction.subscriptionPlanId",
+      transaction.subscriptionPlanId
+    )
     //get and confirm if the subscription plan exist
     const subscriptionPlan = await SubscriptionPlanRepository.fetchOne({
       _id: new mongoose.Types.ObjectId(transaction.subscriptionPlanId),

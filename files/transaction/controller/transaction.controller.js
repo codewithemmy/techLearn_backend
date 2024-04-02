@@ -43,7 +43,7 @@ const paystackWebHook = async (req, res, next) => {
     const [error, data] = await manageAsyncOps(
       TransactionService.verifyCardPayment(event)
     )
-    res.send(200)
+    res.sendStatus(200)
   }
 }
 
