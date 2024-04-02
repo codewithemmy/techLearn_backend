@@ -33,7 +33,6 @@ class PaystackPaymentService {
   }
 
   async verifySuccessOfPayment(payload) {
-    console.log("verifySuccessOfPayment")
     const statusVerification = this.checkSuccessStatus(
       payload.status,
       payload.gateway_response
@@ -119,13 +118,11 @@ class PaystackPaymentService {
 
     //create a check or date when subscription will expire
     const currentDate = new Date()
-    const futureDate = new Date(
-      currentDate.getTime() + 30 * 24 * 60 * 60 * 1000
-    )
+    let futureDate
+    if (subscriptionPlan.duration === "monthly") {
+      futureDate = new Date(currentDate.getTime() + 31 * 24 * 60 * 60 * 1000)
+    }
     const futureDateISOString = futureDate.toISOString()
-
-    console.log("futureDate", futureDate)
-    console.log("futureDateISOString", futureDateISOString)
 
     //create a subscription since webhook is successful
     await SubscriptionRepository.create({
