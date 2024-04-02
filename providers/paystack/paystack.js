@@ -120,7 +120,7 @@ class PaystackPaymentService {
     //create a check or date when subscription will expire
     const currentDate = new Date()
     const futureDate = new Date(
-      currentDate.getTime() + subscriptionPlan.duration * 24 * 60 * 60 * 1000
+      currentDate.getTime() + 30 * 24 * 60 * 60 * 1000
     )
     const futureDateISOString = futureDate.toISOString()
 
