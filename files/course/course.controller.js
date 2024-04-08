@@ -41,10 +41,23 @@ const updateCourseController = async (req, res, next) => {
 
   return responseHandler(res, SUCCESS, data)
 }
+
 const updateCourseModuleController = async (req, res, next) => {
   let value = await fileModifier(req)
   const [error, data] = await manageAsyncOps(
     CourseService.updateCourseModule(value, req.params.id)
+  )
+
+  if (error) return next(error)
+
+  if (!data.success) return next(new CustomError(data.msg, BAD_REQUEST, data))
+
+  return responseHandler(res, SUCCESS, data)
+}
+
+const updateAssessmentController = async (req, res, next) => {
+  const [error, data] = await manageAsyncOps(
+    CourseService.updateModuleAssessment(req.body, req.params.id)
   )
 
   if (error) return next(error)
@@ -59,4 +72,5 @@ module.exports = {
   getCourseController,
   updateCourseController,
   updateCourseModuleController,
+  updateAssessmentController,
 }

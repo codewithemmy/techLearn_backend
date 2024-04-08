@@ -90,10 +90,29 @@ class CourseService {
           "modules.$.overview": body.overview,
           "modules.$.lessonNoteTitle": body.lessonNoteTitle,
           "modules.$.lessonNoteContent": body.lessonNoteContent,
+          "modules.$.assessmentInstruction": body.assessmentInstruction,
           "modules.$.assessment": body.assessment,
           "modules.$.video": image,
         },
       }
+    )
+
+    if (!course)
+      return {
+        success: false,
+        msg: `Unable to update or possibly  wrong  module id`,
+      }
+
+    return { success: true, msg: CourseSuccess.UPDATE, data: course }
+  }
+
+  //update modules assessment
+  static async updateModuleAssessment(payload, moduleId) {
+    const { question, options, answer } = payload
+
+    const course = await CourseRepository.updateCourseDetails(
+      { "modules._id": moduleId },
+      { $push: { "modules.0.assessment": { question, options, answer } } }
     )
 
     if (!course)

@@ -11,7 +11,14 @@ const courseSchema = new mongoose.Schema(
         module: { type: String },
         lessonNoteTitle: { type: String },
         lessonNoteContent: { type: String },
-        assessment: [{ question: { type: String }, answer: { type: Number } }],
+        assessmentInstruction: { type: String },
+        assessment: [
+          {
+            question: { type: String },
+            options: [{ type: String }],
+            answer: { type: Number },
+          },
+        ],
         video: { type: String },
       },
     ],

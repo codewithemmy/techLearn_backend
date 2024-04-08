@@ -29,6 +29,7 @@ const videoManager = (destination) => {
         folder: `TechLearn/module-video/${destination}`,
         format: "mp4",
         resource_type: "video",
+        eager_async: true, // Enable eager transformation asynchronously
       },
     }),
     fileFilter,
