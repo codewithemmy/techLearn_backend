@@ -10,7 +10,7 @@ const COUNTRY_CODE = "234"
 const tokenHandler = async (payload) => {
   try {
     const token = jwt.sign({ ...payload }, process.env.JWT_SECRET, {
-      expiresIn: '365d',
+      expiresIn: "365d",
     })
     return { token }
   } catch (error) {
@@ -19,7 +19,7 @@ const tokenHandler = async (payload) => {
 }
 
 const adminVerifier = (req, res, next) => {
-  if (res.locals.jwt.isAdmin) {
+  if (res.locals.jwt.role === "super") {
     //res.locals.jwt is got from the isAuthenticated middleware
     next()
   } else {

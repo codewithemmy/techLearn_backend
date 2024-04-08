@@ -2,33 +2,42 @@ const mongoose = require("mongoose")
 
 const userSchema = new mongoose.Schema(
   {
-    fullName: {
+    firstName: {
       type: String,
     },
-    email: {
-      type: String,
-    },
-    phoneNumber: {
+    lastName: {
       type: String,
     },
     username: {
       type: String,
     },
     password: { type: String },
-    profileImage: { type: String },
-    description: { type: String },
-    personalization: {
-      expertise: {
-        type: String,
-        enum: ["beginner", "intermediate", "advanced"],
-      },
-      learningGoals: { type: String },
+    email: {
+      type: String,
     },
-    personalDetails: {
-      firstName: { type: String },
-      lastName: { type: String },
-      dateOfBirth: { type: String },
-      gender: { type: String, enum: ["male", "female", "others"] },
+    phoneNumber: {
+      type: String,
+    },
+    address: {
+      type: String,
+    },
+    country: {
+      type: String,
+    },
+    city: {
+      type: String,
+    },
+    introduction: {
+      type: String,
+    },
+    dateOfBirth: {
+      type: String,
+    },
+    postCode: { type: String },
+    profileImage: { type: String },
+    userType: {
+      type: String,
+      default: "free-user",
     },
     isVerified: {
       type: Boolean,

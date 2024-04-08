@@ -9,6 +9,9 @@ class CourseRepository {
   static async findCourseWithParams(payload, select) {
     return Course.find({ ...payload }).select(select)
   }
+  static async fetchOne(payload, select) {
+    return Course.findOne({ ...payload }).select(select)
+  }
 
   static async validateCourse(payload) {
     return Course.exists({ ...payload })

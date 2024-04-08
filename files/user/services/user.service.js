@@ -21,7 +21,7 @@ class UserService {
 
     // const { phone } = sanitizePhoneNumber(phoneNumber)
     validateEmail = await UserRepository.validateUser({
-      $or: [{ email: email }],
+      email: email,
     })
 
     let randomOtp = AlphaNumeric(4, "number")
@@ -42,13 +42,14 @@ class UserService {
       const substitutional_parameters = {
         name: fullName,
         email,
+        otp: randomOtp,
       }
 
       await sendMailNotification(
         email,
         "Tech-Learn Registration",
         substitutional_parameters,
-        "REGISTRATION"
+        "VERIFICATION"
       )
     } catch (error) {
       console.log("error", error)
@@ -70,7 +71,6 @@ class UserService {
 
     const user = await UserRepository.findSingleUserWithParams({
       email,
-      username,
     })
 
     if (!user) return { success: false, msg: UserFailure.VALID_USER }

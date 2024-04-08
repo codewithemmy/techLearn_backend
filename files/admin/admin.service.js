@@ -9,6 +9,7 @@ const {
 const { authMessages } = require("./messages/auth.messages")
 const { adminMessages } = require("./messages/admin.messages")
 const { UserRepository } = require("../user/user.repository")
+const { sendMailNotification } = require("../../utils/email")
 
 class AdminAuthService {
   static async adminSignUpService(body) {
@@ -20,11 +21,38 @@ class AdminAuthService {
       return { success: false, msg: authMessages.ADMIN_EXISTS }
     }
 
+    if (body.role === "instructor" && !body.courseId)
+      return {
+        success: false,
+        msg: `Instructor cannot be added without a course`,
+      }
+
     const password = await hashPassword(body.password)
-    const signUp = await AdminRepository.create({ ...body, password })
+    const signUp = await AdminRepository.create({
+      ...body,
+      courseId: new mongoose.Types.ObjectId(body.courseId),
+      password,
+    })
 
     if (!signUp._id)
       return { success: false, msg: authMessages.ADMIN_NOT_CREATED }
+
+    try {
+      const substitutional_parameters = {
+        name: body.firstName,
+        email: body.email,
+        password: body.password,
+      }
+
+      await sendMailNotification(
+        body.email,
+        "Instructor Role",
+        substitutional_parameters,
+        "INSTRUCTOR_ROLE"
+      )
+    } catch (error) {
+      console.log("error", error)
+    }
 
     return { success: true, msg: authMessages.ADMIN_CREATED }
   }
@@ -56,6 +84,7 @@ class AdminAuthService {
       isAdmin: true,
     })
 
+    admin.password = undefined
     // admin.password = undefined
     return {
       success: true,

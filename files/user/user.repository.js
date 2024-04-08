@@ -1,43 +1,43 @@
-const { User } = require("./user.model");
-const mongoose = require("mongoose");
+const { User } = require("./user.model")
+const mongoose = require("mongoose")
 
 class UserRepository {
   static async create(payload) {
-    return await User.create(payload);
+    return await User.create(payload)
   }
 
   static async findUserWithParams(userPayload, select) {
-    return await User.find({ ...userPayload }).select(select);
+    return await User.find({ ...userPayload }).select(select)
   }
 
   static async findSingleUserWithParams(userPayload) {
-    const user = await User.findOne({ ...userPayload });
+    const user = await User.findOne({ ...userPayload })
 
-    return user;
+    return user
   }
 
   static async validateUser(userPayload) {
-    return User.exists({ ...userPayload });
+    return User.exists({ ...userPayload })
   }
 
   static async findAllUsersParams(userPayload) {
-    const { limit, skip, sort, ...restOfPayload } = userPayload;
+    const { limit, skip, sort, ...restOfPayload } = userPayload
 
     const user = await User.find({ ...restOfPayload }, { password: 0 })
       .sort(sort)
       .skip(skip)
-      .limit(limit);
+      .limit(limit)
 
-    return user;
+    return user
   }
 
   static async updateUserDetails(id, params) {
     return User.findOneAndUpdate(
-      { _id: new mongoose.Types.ObjectId(id) },
+      { ...id },
       { ...params },
       { new: true, runValidators: true }
-    );
+    )
   }
 }
 
-module.exports = { UserRepository };
+module.exports = { UserRepository }

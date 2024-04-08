@@ -18,7 +18,9 @@ const createCourseController = async (req, res, next) => {
 }
 
 const getCourseController = async (req, res, next) => {
-  const [error, data] = await manageAsyncOps(CourseService.getCourse(req.query))
+  const [error, data] = await manageAsyncOps(
+    CourseService.getCourse(req.query, res.locals.jwt)
+  )
 
   if (error) return next(error)
 

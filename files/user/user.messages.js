@@ -1,10 +1,11 @@
 module.exports.UserSuccess = {
-  CREATE: "User successfully created",
+  CREATE:
+    "User successfully created, check your email for otp to verify your account ",
   FETCH: "User successfully fetched",
   UPDATE: "Update Successful",
   DELETE: "Delete Successful",
   PASSWORD_RESET: "Password successfully updated",
-};
+}
 
 module.exports.UserFailure = {
   CREATE: "Unable to create user",
@@ -20,4 +21,4 @@ module.exports.UserFailure = {
   VERIFIED: "Unverified user, kindly verify your account",
   OTP: "Incorrect OTP used",
   PASSWORD_RESET: "Error resetting password",
-};
+}

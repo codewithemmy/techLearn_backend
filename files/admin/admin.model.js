@@ -1,4 +1,4 @@
-const mongoose = require("mongoose");
+const mongoose = require("mongoose")
 
 const adminSchema = new mongoose.Schema(
   {
@@ -42,14 +42,21 @@ const adminSchema = new mongoose.Schema(
     status: {
       type: String,
     },
+    postalCode: {
+      type: String,
+    },
     active: {
       type: Boolean,
       default: false,
     },
+    courseId: {
+      type: mongoose.Types.ObjectId,
+      ref: "Course",
+    },
   },
   { timestamps: true }
-);
+)
 
-const admin = mongoose.model("Admin", adminSchema, "admin");
+const admin = mongoose.model("Admin", adminSchema, "admin")
 
-module.exports = { Admin: admin };
+module.exports = { Admin: admin }

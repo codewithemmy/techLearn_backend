@@ -5,15 +5,13 @@ const courseSchema = new mongoose.Schema(
     title: {
       type: String,
     },
+    overview: { type: String },
     modules: [
       {
         module: { type: String },
-        overview: { type: String },
         lessonNoteTitle: { type: String },
         lessonNoteContent: { type: String },
-        assessment: [
-          { question: { type: String }, answer: [{ type: Number }] },
-        ],
+        assessment: [{ question: { type: String }, answer: { type: Number } }],
         video: { type: String },
       },
     ],

@@ -2,6 +2,7 @@ const { queryConstructor } = require("../../utils")
 const { CourseFailure, CourseSuccess } = require("./course.messages")
 const { CourseRepository } = require("./course.repository")
 const mongoose = require("mongoose")
+const { AdminRepository } = require("../admin/admin.repository")
 
 class CourseService {
   static async createCourse(payload, locals) {
@@ -18,7 +19,7 @@ class CourseService {
     return { success: true, msg: CourseSuccess.CREATE, data: course }
   }
 
-  static async getCourse(payload) {
+  static async getCourse(payload, locals) {
     const { error, params, limit, skip, sort } = queryConstructor(
       payload,
       "createdAt",
@@ -26,8 +27,28 @@ class CourseService {
     )
     if (error) return { success: false, msg: error }
 
+    let extra = {}
+    if (locals.role === "instructor") {
+      const admin = await AdminRepository.fetchAdmin({
+        _id: new mongoose.Types.ObjectId(locals._id),
+      })
+
+      const instructorCourse = await CourseRepository.fetchOne({
+        _id: admin.courseId,
+      })
+
+      if (!instructorCourse)
+        return {
+          success: false,
+          msg: `Current instructor has no course assigned`,
+        }
+
+      extra = { _id: new mongoose.Types.ObjectId(instructorCourse._id) }
+    }
+
     const course = await CourseRepository.findAllCourseParams({
       ...params,
+      ...extra,
       limit,
       skip,
       sort,
