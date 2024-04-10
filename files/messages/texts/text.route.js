@@ -1,8 +1,6 @@
-const { checkSchema } = require("express-validator")
 const textRoute = require("express").Router()
 const { isAuthenticated } = require("../../../utils")
-// const { validate } = require("../../../validation/validate")
-const { uploadManager } = require("../../../utils/multer")
+
 const {
   sendTextController,
   fetchTextsController,
@@ -14,9 +12,6 @@ const {
 textRoute.use(isAuthenticated)
 
 //routes
-textRoute
-  .route("/")
-  .post(uploadManager("textImage").single("image"), sendTextController)
-  .get(fetchTextsController)
+textRoute.route("/").post(sendTextController).get(fetchTextsController)
 
 module.exports = textRoute

@@ -4,60 +4,49 @@ const {
 } = require("../conversations/conversation.repository")
 const { TextRepository } = require("./text.repository")
 const { TextMessages } = require("./text.messages")
-const { SocketRepository } = require("../sockets/sockets.repository")
+const { AdminRepository } = require("../../admin/admin.repository")
 const { queryConstructor } = require("../../../utils")
 
 class TextService {
-  static async sendText(value, textPayload) {
-    const { recipientId, recipient, message } = value.body
-    const { image } = value
+  static async sendText(payload, textPayload) {
+    const { courseId, message, sentBy } = payload
 
-    const {
-      _id,
-      io,
-      image: senderImage,
-      firstName,
-      lastName,
-      email,
-    } = textPayload
+    if (!courseId) return { success: false, msg: `CourseId not found` }
 
+    const { _id } = textPayload
+
+    let instructor
     let conversationId
     let conversation = await ConversationRepository.findSingleConversation({
-      $or: [
-        {
-          entityOneId: new mongoose.Types.ObjectId(_id),
-          entityTwoId: new mongoose.Types.ObjectId(recipientId),
-        },
-        {
-          entityOneId: new mongoose.Types.ObjectId(recipientId),
-          entityTwoId: new mongoose.Types.ObjectId(_id),
-        },
-      ],
+      courseId: new mongoose.Types.ObjectId(courseId),
     })
 
     if (!conversation) {
+      instructor = await AdminRepository.fetchAdmin({
+        courseId: new mongoose.Types.ObjectId(courseId),
+      })
+
+      if (!instructor)
+        return { success: false, msg: `Invalid courseId provided` }
+
       const newConversation = await ConversationRepository.createConversation({
-        entityOne: "User",
-        entityOneId: new mongoose.Types.ObjectId(_id),
-        entityTwoId: new mongoose.Types.ObjectId(recipientId),
-        entityTwo: recipient,
+        courseId: new mongoose.Types.ObjectId(courseId),
+        instructorId: new mongoose.Types.ObjectId(instructor._id),
       })
       conversationId = newConversation._id
       conversation = newConversation
     } else conversationId = conversation._id
 
-    if (!message && !image) {
+    if (!message) {
       return { success: false, msg: TextMessages.CREATE_ERROR }
     }
 
     const text = await TextRepository.createText({
       senderId: new mongoose.Types.ObjectId(_id),
-      sender: "User",
-      recipientId: new mongoose.Types.ObjectId(recipientId),
-      recipient: recipient,
+      sender: sentBy,
       conversationId,
       message,
-      image,
+      courseId,
     })
 
     if (!text._id) return { success: false, msg: TextMessages.CREATE_ERROR }
@@ -68,26 +57,7 @@ class TextService {
       { updatedAt: new Date() }
     )
 
-    const socketDetails = await SocketRepository.findSingleSocket({
-      userId: new mongoose.Types.ObjectId(recipientId),
-    })
-
-    if (socketDetails)
-      io.to(socketDetails.socketId).emit("private-message", {
-        recipientId: { _id: recipientId },
-        message,
-        conversationId,
-        image,
-        senderId: {
-          _id,
-          image: senderImage,
-          firstName,
-          lastName,
-          email,
-        },
-      })
-
-    return { success: true, msg: TextMessages.CREATE, data: { conversationId } }
+    return { success: true, msg: TextMessages.CREATE, data: { courseId } }
   }
 
   static async fetchTexts(textPayload, user) {
@@ -98,15 +68,18 @@ class TextService {
     )
     if (error) return { success: false, msg: error }
 
-    if (!params.conversationId)
+    if (!params.courseId)
       return { success: false, msg: TextMessages.MISSING_CONVERSATION_ID }
 
+    const conversation = await ConversationRepository.findSingleConversation({
+      courseId: new mongoose.Types.ObjectId(params.courseId),
+    })
+
+    if (!conversation)
+      return { success: false, msg: `Invalid course id for chat` }
+
     const texts = await TextRepository.fetchTextsByParams({
-      $or: [
-        { senderId: new mongoose.Types.ObjectId(user._id) },
-        { recipientId: new mongoose.Types.ObjectId(user._id) },
-      ],
-      conversationId: params.conversationId,
+      conversationId: new mongoose.Types.ObjectId(conversation._id),
       limit,
       skip,
       sort,

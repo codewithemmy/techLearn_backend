@@ -14,20 +14,6 @@ class ConversationRepository {
     const conversations = await Conversation.find({
       ...restOfPayload,
     })
-      .populate("entityOneId", {
-        firstName: 1,
-        lastName: 1,
-        email: 1,
-        profileImage: 1,
-        phoneNumber: 1,
-      })
-      .populate("entityTwoId", {
-        firstName: 1,
-        lastName: 1,
-        email: 1,
-        profileImage: 1,
-        phoneNumber: 1,
-      })
       .sort(sort)
       .skip(skip)
       .limit(limit)

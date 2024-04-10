@@ -4,21 +4,18 @@ const textSchema = new mongoose.Schema(
   {
     sender: {
       type: String,
-      enum: ["User"],
+      enum: ["User", "Admin"],
     },
     senderId: {
       type: mongoose.Types.ObjectId,
       refPath: "sender",
     },
-    recipient: {
-      type: String,
-      enum: ["User"],
-    },
-    recipientId: {
-      type: mongoose.Types.ObjectId,
-      refPath: "recipient",
-    },
     conversationId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Conversation",
+      required: true,
+    },
+    courseId: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Conversation",
       required: true,

@@ -5,12 +5,8 @@ const { CustomError } = require("../../../utils/errors")
 const { TextService } = require("./text.service")
 
 const sendTextController = async (req, res, next) => {
-  let value = await fileModifier(req)
   const [error, data] = await manageAsyncOps(
-    TextService.sendText(value, {
-      ...res.locals.jwt,
-      io: res.io,
-    })
+    TextService.sendText(req.body, res.locals.jwt)
   )
 
   if (error) return next(error)

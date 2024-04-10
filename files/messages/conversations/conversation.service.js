@@ -8,7 +8,7 @@ class ConversationService {
     return ConversationRepository.createConversation(conversationPayload)
   }
 
-  static async fetchConversations(conversationPayload, userId) {
+  static async fetchConversations(conversationPayload, adminId) {
     const { error, limit, skip, sort } = queryConstructor(
       conversationPayload,
       "updatedAt",
@@ -18,10 +18,7 @@ class ConversationService {
 
     const conversations =
       await ConversationRepository.fetchConversationsByParams({
-        $or: [
-          { entityOneId: new mongoose.Types.ObjectId(userId) },
-          { entityTwoId: new mongoose.Types.ObjectId(userId) },
-        ],
+        instructorId: new mongoose.Types.ObjectId(adminId),
         limit,
         skip,
         sort,

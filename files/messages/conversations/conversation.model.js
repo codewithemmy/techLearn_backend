@@ -2,21 +2,13 @@ const mongoose = require("mongoose")
 
 const conversationSchema = new mongoose.Schema(
   {
-    entityOne: {
-      type: String,
-      enum: ["User"],
-    },
-    entityOneId: {
+    instructorId: {
       type: mongoose.Types.ObjectId,
-      refPath: "entityOne",
+      ref: "Admin",
     },
-    entityTwo: {
-      type: String,
-      enum: ["User"],
-    },
-    entityTwoId: {
+    courseId: {
       type: mongoose.Types.ObjectId,
-      refPath: "entityTwo",
+      ref: "Course",
     },
     updatedAt: { type: Date, default: Date.now },
   },
