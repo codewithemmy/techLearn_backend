@@ -17,7 +17,7 @@ const textSchema = new mongoose.Schema(
     },
     courseId: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "Conversation",
+      ref: "Courses",
       required: true,
     },
     message: {
