@@ -23,7 +23,7 @@ class ProfileService {
     return { success: true, msg: UserSuccess.UPDATE }
   }
 
-  static async getUserService(userPayload) {
+  static async getUserService(userPayload, locals) {
     const { error, params, limit, skip, sort } = queryConstructor(
       userPayload,
       "createdAt",
@@ -31,8 +31,14 @@ class ProfileService {
     )
     if (error) return { success: false, msg: error }
 
+    let extra = {}
+    if (!locals.isAdmin) {
+      extra = { _id: new mongoose.Types.ObjectId(locals._id) }
+    }
+
     const allUsers = await UserRepository.findAllUsersParams({
       ...params,
+      ...extra,
       limit,
       skip,
       sort,

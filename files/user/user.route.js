@@ -15,7 +15,10 @@ const {
   verifyUserController,
   resendOtpController,
 } = require("../user/controllers/user.controller")
-const { updateUserController } = require("./controllers/profile.controller")
+const {
+  updateUserController,
+  getUserController,
+} = require("./controllers/profile.controller")
 
 //routes
 userRoute.route("/").post(createUserController)
@@ -31,5 +34,7 @@ userRoute.use(isAuthenticated)
 userRoute
   .route("/")
   .patch(uploadManager("profileImage").single("image"), updateUserController)
+
+userRoute.route("/").get(getUserController)
 
 module.exports = userRoute

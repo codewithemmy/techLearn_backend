@@ -95,7 +95,14 @@ class UserService {
     return {
       success: true,
       msg: `Login Successful`,
-      data: { user, ...token },
+      data: {
+        userType: user.userType,
+        _id: user._id,
+        firstName: user.firstName,
+        lastName: user.lastName,
+        email: user.email,
+        ...token,
+      },
     }
   }
 

@@ -89,7 +89,17 @@ class AdminAuthService {
     return {
       success: true,
       msg: authMessages.ADMIN_FOUND,
-      data: { admin, ...token },
+      data: {
+        _id: admin._id,
+        firstName: admin.firstName,
+        lastName: admin.lastName,
+        email: admin.email,
+        accountType: admin.accountType,
+        accountType: admin.role,
+        status: admin.status,
+        role: admin.role,
+        ...token,
+      },
     }
   }
 
