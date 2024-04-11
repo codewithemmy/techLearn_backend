@@ -113,12 +113,12 @@ class UserService {
 
     if (!user) return { success: false, msg: UserFailure.USER_EXIST }
 
-    const { otp } = generateOtp()
+    let otp = AlphaNumeric(4, "number")
 
     //save otp to compare
-    user.verificationOtp = otp
+    user.emailVerificationOtp = await hashPassword(otp)
     await user.save()
-
+    console.log("otp", otp)
     try {
       /**send otp to email or phone number*/
       const substitutional_parameters = {
@@ -139,17 +139,17 @@ class UserService {
   }
 
   static async resetPassword(body) {
-    const { newPassword, email, otp } = body
+    const { newPassword, email } = body
 
     const user = await UserRepository.findSingleUserWithParams({
       email,
-      verificationOtp: otp,
     })
 
     if (!user) return { success: false, msg: UserFailure.OTP }
+    if (user.emailVerificationOtp)
+      return { success: false, msg: `otp not verified` }
 
     user.password = await hashPassword(newPassword)
-    user.verificationOtp = ""
 
     const saveUser = await user.save()
 
@@ -205,7 +205,7 @@ class UserService {
 
     if (!verifyOtp) return { success: false, msg: `Incorrect Otp` }
 
-    user.emailVerificationOtp = ""
+    user.emailVerificationOtp = null
     user.isVerified = true
     const saveUser = await user.save()
 

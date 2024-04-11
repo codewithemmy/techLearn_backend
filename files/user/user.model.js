@@ -50,6 +50,10 @@ const userSchema = new mongoose.Schema(
     emailVerificationOtp: {
       type: String,
     },
+    courseId: {
+      type: mongoose.Types.ObjectId,
+      ref: "Course",
+    },
   },
   { timestamps: true }
 )

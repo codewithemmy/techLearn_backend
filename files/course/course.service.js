@@ -3,6 +3,10 @@ const { CourseFailure, CourseSuccess } = require("./course.messages")
 const { CourseRepository } = require("./course.repository")
 const mongoose = require("mongoose")
 const { AdminRepository } = require("../admin/admin.repository")
+const {
+  SubscriptionRepository,
+} = require("../subscription/subscription.repository")
+const { UserRepository } = require("../user/user.repository")
 
 class CourseService {
   static async createCourse(payload, locals) {
@@ -123,6 +127,62 @@ class CourseService {
 
     return { success: true, msg: CourseSuccess.UPDATE, data: course }
   }
+
+  //student course enrollment
+  static async studentCourseEnrollment(payload, locals) {
+    const validateCourse = await CourseRepository.fetchOne({
+      _id: new mongoose.Types.ObjectId(payload),
+    })
+
+    if (!validateCourse)
+      return { success: false, msg: `Invalid course Id for enrollment` }
+
+    // Get current date
+    const currentDate = new Date()
+
+    const validateSubscription = await SubscriptionRepository.fetchOne({
+      userId: new mongoose.Types.ObjectId(locals._id),
+      status: "active",
+      expiresAt: { $gte: currentDate },
+    })
+
+    if (!validateSubscription)
+      return {
+        return: false,
+        msg: `User have no valid subscription, kindly subscribe`,
+      }
+
+    const updateUserCourse = await UserRepository.updateUserDetails(
+      {
+        _id: new mongoose.Types.ObjectId(locals._id),
+      },
+      { courseId: new mongoose.Types.ObjectId(validateCourse._id) }
+    )
+
+    if (!updateUserCourse)
+      return { success: false, msg: `Unable to enroll user's course` }
+
+    return { success: true, msg: `Course enrollment successful` }
+  }
+
+  //list of course student
+  // static async courseStudent(payload) {
+  //   const course = await CourseRepository.fetchOne({
+  //     _id: new mongoose.Types.ObjectId(payload),
+  //   })
+
+  //   if (!course)
+  //     return {
+  //       success: false,
+  //       msg: `Invalid course Id`,
+  //     }
+
+  //   const student = await UserRepository.findUserWithParams({
+  //     courseId: new mongoose.Types.ObjectId(course._id),
+  //   })
+
+  //   return { success: true, msg: CourseSuccess.UPDATE, data: course }
+  // }
 }
 
 module.exports = { CourseService }
