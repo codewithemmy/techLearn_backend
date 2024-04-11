@@ -79,6 +79,18 @@ const studentEnrollmentController = async (req, res, next) => {
   return responseHandler(res, SUCCESS, data)
 }
 
+const courseStudentController = async (req, res, next) => {
+  const [error, data] = await manageAsyncOps(
+    CourseService.courseStudent(req.params.id)
+  )
+
+  if (error) return next(error)
+
+  if (!data.success) return next(new CustomError(data.msg, BAD_REQUEST, data))
+
+  return responseHandler(res, SUCCESS, data)
+}
+
 module.exports = {
   createCourseController,
   getCourseController,
@@ -86,4 +98,5 @@ module.exports = {
   updateCourseModuleController,
   updateAssessmentController,
   studentEnrollmentController,
+  courseStudentController,
 }

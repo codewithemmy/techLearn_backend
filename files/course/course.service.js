@@ -152,11 +152,23 @@ class CourseService {
         msg: `User have no valid subscription, kindly subscribe`,
       }
 
+    //validate if student is enrolled
+    const user = await UserRepository.findSingleUserWithParams({
+      _id: new mongoose.Types.ObjectId(locals._id),
+      enrollmentStatus: "active",
+    })
+
+    if (user)
+      return { success: false, msg: `User already enrolled in a course` }
+    
     const updateUserCourse = await UserRepository.updateUserDetails(
       {
         _id: new mongoose.Types.ObjectId(locals._id),
       },
-      { courseId: new mongoose.Types.ObjectId(validateCourse._id) }
+      {
+        courseId: new mongoose.Types.ObjectId(validateCourse._id),
+        enrollmentStatus: "active",
+      }
     )
 
     if (!updateUserCourse)
@@ -166,23 +178,30 @@ class CourseService {
   }
 
   //list of course student
-  // static async courseStudent(payload) {
-  //   const course = await CourseRepository.fetchOne({
-  //     _id: new mongoose.Types.ObjectId(payload),
-  //   })
+  static async courseStudent(payload) {
+    const course = await CourseRepository.fetchOne({
+      _id: new mongoose.Types.ObjectId(payload),
+    })
 
-  //   if (!course)
-  //     return {
-  //       success: false,
-  //       msg: `Invalid course Id`,
-  //     }
+    if (!course)
+      return {
+        success: false,
+        msg: `Invalid course Id`,
+      }
 
-  //   const student = await UserRepository.findUserWithParams({
-  //     courseId: new mongoose.Types.ObjectId(course._id),
-  //   })
+    const student = await UserRepository.findAllUsersParams({
+      courseId: new mongoose.Types.ObjectId(course._id),
+    })
 
-  //   return { success: true, msg: CourseSuccess.UPDATE, data: course }
-  // }
+    if (!student)
+      return {
+        success: true,
+        msg: `No available student for your course`,
+        data: [],
+      }
+
+    return { success: true, msg: CourseSuccess.UPDATE, data: student }
+  }
 }
 
 module.exports = { CourseService }

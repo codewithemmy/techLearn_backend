@@ -50,6 +50,14 @@ const userSchema = new mongoose.Schema(
     emailVerificationOtp: {
       type: String,
     },
+    level: {
+      type: String,
+    },
+    enrollmentStatus: {
+      type: String,
+      enum: ["active", "inactive"],
+      default: "inactive",
+    },
     courseId: {
       type: mongoose.Types.ObjectId,
       ref: "Course",
