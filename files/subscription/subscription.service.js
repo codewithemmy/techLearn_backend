@@ -13,7 +13,7 @@ class SubscriptionService {
     return { success: true, msg: SubscriptionMessages.CREATE_SUCCESS }
   }
 
-  static async fetchSubscription(payload) {
+  static async fetchSubscription(payload, locals) {
     const { error, params, limit, skip, sort } = queryConstructor(
       payload,
       "createdAt",
@@ -22,8 +22,14 @@ class SubscriptionService {
 
     if (error) return { success: false, msg: error }
 
+    let extra = {}
+    if (!locals.isAdmin) {
+      extra = { userId: new mongoose.Types.ObjectId(locals._id) }
+    }
+
     const subscription = await SubscriptionRepository.fetchWithParams({
       ...params,
+      ...extra,
       limit,
       skip,
       sort,

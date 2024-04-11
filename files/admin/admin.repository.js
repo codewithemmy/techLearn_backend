@@ -1,28 +1,33 @@
-const { Admin } = require("../admin/admin.model");
+const { Admin } = require("../admin/admin.model")
 
 class AdminRepository {
   static async create(body) {
-    return Admin.create(body);
+    return Admin.create(body)
   }
 
   static async fetchAdmin(body) {
-    const admin = await Admin.findOne({ ...body });
-    return admin;
+    const admin = await Admin.findOne({ ...body })
+    return admin
   }
 
   static async findAdminParams(adminPayload) {
-    const { limit, skip, sort, ...restOfPayload } = adminPayload;
+    const { limit, skip, sort, ...restOfPayload } = adminPayload
     const user = await Admin.find({ ...restOfPayload })
       .sort(sort)
       .skip(skip)
-      .limit(limit);
+      .limit(limit)
+      .select({ password: 0 })
 
-    return user;
+    return user
   }
 
   static async updateAdminDetails(query, params) {
-    return Admin.findOneAndUpdate({ ...query }, { ...params });
+    return Admin.findOneAndUpdate(
+      { ...query },
+      { ...params },
+      { new: true, runValidators: true }
+    )
   }
 }
 
-module.exports = { AdminRepository };
+module.exports = { AdminRepository }

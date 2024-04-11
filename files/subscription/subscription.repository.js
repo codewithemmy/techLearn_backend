@@ -22,7 +22,11 @@ class SubscriptionRepository {
       ...restOfPayload,
     })
       .populate({
-        path: "subscriptionId",
+        path: "subscriptionPanId",
+      })
+      .populate({
+        path: "userId",
+        select: "fullName email username profileImage",
       })
       .sort(sort)
       .skip(skip)

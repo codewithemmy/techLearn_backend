@@ -85,7 +85,7 @@ class UserService {
 
     token = await tokenHandler({
       isAdmin: false,
-      userType: "student",
+      userType: user.userType,
       _id: user._id,
       fullName: user.fullName,
       email: user.email,

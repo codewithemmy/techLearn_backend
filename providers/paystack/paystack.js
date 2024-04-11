@@ -15,6 +15,7 @@ const {
 const {
   SubscriptionRepository,
 } = require("../../files/subscription/subscription.repository")
+const { UserRepository } = require("../../files/user/user.repository")
 
 class PaystackPaymentService {
   paymentRequestHandler = RequestHandler.setup({
@@ -135,6 +136,14 @@ class PaystackPaymentService {
       isConfirmed: true,
       expiresAt: futureDateISOString,
     })
+
+    // upgrade user plan type
+    await UserRepository.updateUserDetails(
+      {
+        _id: new mongoose.Types.ObjectId(transaction.userId),
+      },
+      { userType: subscriptionPlan.planType }
+    )
 
     return { success: true, msg: TransactionMessages.PAYMENT_SUCCESS }
   }

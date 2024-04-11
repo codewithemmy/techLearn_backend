@@ -37,6 +37,7 @@ const userSchema = new mongoose.Schema(
     profileImage: { type: String },
     userType: {
       type: String,
+      enum: ["free", "standard", "premium"],
       default: "free-user",
     },
     isVerified: {

@@ -116,10 +116,10 @@ class AdminAuthService {
 
   static async updateAdminService(data, id) {
     const { body, image } = data
-
+    delete body.email
     const admin = await AdminRepository.updateAdminDetails(
       { _id: new mongoose.Types.ObjectId(id) },
-      { ...body, image }
+      { ...body, profileImage: image }
     )
 
     delete admin.password
@@ -133,7 +133,6 @@ class AdminAuthService {
     return {
       success: true,
       msg: adminMessages.UPDATE_PROFILE_SUCCESS,
-      admin,
     }
   }
 
@@ -212,6 +211,8 @@ class AdminAuthService {
     })
 
     if (!getAdmin) return { success: false, msg: authMessages.ADMIN_NOT_FOUND }
+
+    getAdmin.password = undefined
 
     return { success: true, msg: authMessages.ADMIN_FOUND, data: getAdmin }
   }
