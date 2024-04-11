@@ -26,7 +26,7 @@ const forgotPasswordController = async (req, res, next) => {
   const [error, data] = await manageAsyncOps(
     UserService.forgotPassword(req.body)
   )
-  console.log("error", error)
+
   if (error) return next(error)
 
   if (!data.success) return next(new CustomError(data.msg, BAD_REQUEST, data))

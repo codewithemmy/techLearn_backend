@@ -118,7 +118,7 @@ class UserService {
     //save otp to compare
     user.emailVerificationOtp = await hashPassword(otp)
     await user.save()
-    console.log("otp", otp)
+
     try {
       /**send otp to email or phone number*/
       const substitutional_parameters = {
