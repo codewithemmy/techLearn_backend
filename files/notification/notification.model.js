@@ -12,6 +12,7 @@ const NotificationSchema = new mongoose.Schema(
     },
     recipient: {
       type: String,
+      enum: ["User", "Admin"],
     },
     title: {
       type: String,
@@ -21,12 +22,8 @@ const NotificationSchema = new mongoose.Schema(
     },
     status: {
       type: String,
-      enum: ["new", "read"],
-      default: "new",
-    },
-    accountType: {
-      type: String,
-      enum: ["User", "CityBuilder", "Marketer", "All"],
+      enum: ["unread", "read"],
+      default: "unread",
     },
   },
   { timestamps: true }

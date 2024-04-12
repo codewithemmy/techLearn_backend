@@ -6,6 +6,9 @@ const {
 } = require("../../../utils")
 const { UserSuccess, UserFailure } = require("../user.messages")
 const { UserRepository } = require("../user.repository")
+const {
+  NotificationRepository,
+} = require("../../notification/notification.repository")
 
 class ProfileService {
   static async userUpdate(payload, locals) {
@@ -66,6 +69,19 @@ class ProfileService {
     const updateUser = await user.save()
 
     if (!updateUser) return { success: false, msg: UserFailure.UPDATE }
+
+    try {
+      Promise.all([
+        await NotificationRepository.createNotification({
+          recipient: "User",
+          recipientId: new mongoose.Types.ObjectId(user._id),
+          title: `Password Change`,
+          message: `You have successfully changed your password`,
+        }),
+      ])
+    } catch (error) {
+      console.log("error", error)
+    }
 
     return { success: true, msg: UserSuccess.UPDATE }
   }

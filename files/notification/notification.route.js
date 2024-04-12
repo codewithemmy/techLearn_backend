@@ -3,18 +3,10 @@ const { isAuthenticated } = require("../../utils")
 
 notificationRoute.use(isAuthenticated)
 
-const {
-  fetchNotifications,
-  postNotifications,
-  updateNotification,
-} = require("./notification.controller")
+const { fetchNotifications } = require("./notification.controller")
 
 notificationRoute.use(isAuthenticated)
 //route
-notificationRoute
-  .route("/")
-  .get(fetchNotifications)
-  .post(postNotifications)
-  .patch(updateNotification)
+notificationRoute.route("/").get(fetchNotifications)
 
 module.exports = notificationRoute
