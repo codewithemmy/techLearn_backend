@@ -1,8 +1,5 @@
 const subscriptionRoute = require("express").Router()
-// const { checkSchema } = require("express-validator")
-// const { validate } = require("../../validations/validate")
-const { videoManager } = require("../../utils/multer")
-const { isAuthenticated, adminVerifier } = require("../../utils")
+const { isAuthenticated } = require("../../utils")
 const {
   createSubscriptionController,
   fetchSubscriptionController,

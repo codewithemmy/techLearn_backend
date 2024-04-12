@@ -14,11 +14,11 @@ class TransactionRepository {
     const transaction = await Transaction.find({
       ...restOfPayload,
     })
-      .populate("subscriptionId")
+      .populate("subscriptionPlanId")
       .sort(sort)
       .skip(skip)
       .limit(limit)
-      .select(select)
+      .select({ metaData: 0, reference: 0 })
 
     return transaction
   }
