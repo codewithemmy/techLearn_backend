@@ -5,6 +5,9 @@ const courseSchema = new mongoose.Schema(
     title: {
       type: String,
     },
+    courseCover: {
+      type: String,
+    },
     overview: { type: String },
     modules: [
       {

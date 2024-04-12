@@ -14,7 +14,7 @@ class CourseService {
 
     const course = await CourseRepository.create({
       ...body,
-      image,
+      courseCover: image,
       createdBy: new mongoose.Types.ObjectId(locals._id),
     })
 
@@ -160,7 +160,7 @@ class CourseService {
 
     if (user)
       return { success: false, msg: `User already enrolled in a course` }
-    
+
     const updateUserCourse = await UserRepository.updateUserDetails(
       {
         _id: new mongoose.Types.ObjectId(locals._id),

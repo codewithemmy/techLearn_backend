@@ -1,6 +1,6 @@
 const courseRoute = require("express").Router()
 const { isAuthenticated, adminVerifier } = require("../../utils")
-const { videoManager } = require("../../utils/multer")
+const { videoManager, uploadManager } = require("../../utils/multer")
 const {
   createCourseController,
   getCourseController,
@@ -17,7 +17,7 @@ courseRoute.use(isAuthenticated)
 courseRoute
   .route("/")
   .post(
-    videoManager("courseVideo").single("video"),
+    uploadManager("image").single("image"),
     adminVerifier,
     createCourseController
   )
