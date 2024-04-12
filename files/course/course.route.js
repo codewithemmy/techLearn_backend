@@ -9,6 +9,7 @@ const {
   updateAssessmentController,
   studentEnrollmentController,
   courseStudentController,
+  moduleAssessmentController,
 } = require("./course.controller")
 
 courseRoute.use(isAuthenticated)
@@ -42,5 +43,8 @@ courseRoute.route("/enroll/:id").post(studentEnrollmentController)
 
 //course student
 courseRoute.route("/student/:id").get(courseStudentController)
+
+//module assessment or test
+courseRoute.route("/module-assessment").post(moduleAssessmentController)
 
 module.exports = courseRoute

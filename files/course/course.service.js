@@ -202,6 +202,47 @@ class CourseService {
 
     return { success: true, msg: CourseSuccess.UPDATE, data: student }
   }
+
+  //module assessment or test
+  static async moduleAssessmentTest(payload) {
+    const { courseId, moduleId, answer } = payload
+
+    const course = await CourseRepository.fetchOne({
+      _id: new mongoose.Types.ObjectId(courseId),
+      "modules._id": moduleId,
+    })
+
+    if (!course)
+      return {
+        success: false,
+        msg: `Invalid course or module Id`,
+      }
+
+    const courseModule = course.modules.find(
+      (module) => module._id.toString() === moduleId
+    )
+    if (!courseModule)
+      return { success: false, msg: `Invalid course module Id` }
+
+    // Map only the assessment array from the module and console.log it
+    const assessmentArray = courseModule.assessment.map((question) => question)
+
+    // Initialize an empty array to store the results
+    let result = 0
+
+    // Iterate through both arrays and compare elements
+    answer.forEach((payloadAnswer, index) => {
+      // Compare the payload answer with the corresponding assessment answer
+      console.log(
+        `Comparing payloadAnswer: ${payloadAnswer} with assessmentAnswer: ${assessmentArray[index].answer}`
+      )
+      if (payloadAnswer === assessmentArray[index].answer) {
+        result += 10
+      }
+    })
+
+    return { success: true, msg: CourseSuccess.UPDATE, data: result }
+  }
 }
 
 module.exports = { CourseService }
