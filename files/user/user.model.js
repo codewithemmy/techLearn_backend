@@ -38,7 +38,7 @@ const userSchema = new mongoose.Schema(
     userType: {
       type: String,
       enum: ["free", "standard", "premium"],
-      default: "free-user",
+      default: "free",
     },
     isVerified: {
       type: Boolean,
