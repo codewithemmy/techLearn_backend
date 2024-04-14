@@ -67,7 +67,7 @@ class UserService {
   }
 
   static async userLogin(payload) {
-    const { email, username, password } = payload
+    const { email, password } = payload
 
     const user = await UserRepository.findSingleUserWithParams({
       email,
@@ -114,7 +114,7 @@ class UserService {
     if (!user) return { success: false, msg: UserFailure.USER_EXIST }
 
     let otp = AlphaNumeric(4, "number")
-
+  
     //save otp to compare
     user.emailVerificationOtp = await hashPassword(otp)
     await user.save()
@@ -202,6 +202,7 @@ class UserService {
     if (!user) return { success: false, msg: UserFailure.OTP }
 
     const verifyOtp = await verifyPassword(otp, user.emailVerificationOtp)
+    console.log(verifyOtp)
 
     if (!verifyOtp) return { success: false, msg: `Incorrect Otp` }
 
