@@ -20,6 +20,7 @@ const application = (io) => {
   app.use(cors())
   app.use(emailValidation)
 
+  //app
   app.use((req, res, next) => {
     res.io = io
     next()
