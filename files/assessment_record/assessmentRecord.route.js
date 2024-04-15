@@ -10,13 +10,7 @@ const {
 assessmentRoute.use(isAuthenticated)
 
 //routes
-assessmentRoute
-  .route("/")
-  .post(
-    uploadManager("image").single("image"),
-    adminVerifier,
-    createAssessmentController
-  )
+assessmentRoute.route("/").post(createAssessmentController)
 
 assessmentRoute.route("/:id").patch(updateAssessmentController)
 

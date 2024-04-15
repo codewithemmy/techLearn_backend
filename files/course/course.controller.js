@@ -93,7 +93,7 @@ const courseStudentController = async (req, res, next) => {
 
 const moduleAssessmentController = async (req, res, next) => {
   const [error, data] = await manageAsyncOps(
-    CourseService.moduleAssessmentTest(req.body)
+    CourseService.moduleAssessmentTest(req.body, res.locals.jwt._id)
   )
   if (error) return next(error)
 

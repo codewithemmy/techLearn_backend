@@ -7,6 +7,9 @@ const {
   SubscriptionRepository,
 } = require("../subscription/subscription.repository")
 const { UserRepository } = require("../user/user.repository")
+const {
+  AssessmentRecordRepository,
+} = require("../assessment_record/assessmentRecord.repository")
 
 class CourseService {
   static async createCourse(payload, locals) {
@@ -204,7 +207,7 @@ class CourseService {
   }
 
   //module assessment or test
-  static async moduleAssessmentTest(payload) {
+  static async moduleAssessmentTest(payload, locals) {
     const { courseId, moduleId, answer } = payload
 
     const course = await CourseRepository.fetchOne({
@@ -241,7 +244,43 @@ class CourseService {
       }
     })
 
-    return { success: true, msg: CourseSuccess.UPDATE, data: result }
+    let assessmentRecord
+    const confirmAssessmentRecord = await AssessmentRecordRepository.fetchOne({
+      moduleId,
+      userId: new mongoose.Types.ObjectId(locals),
+      courseId: new mongoose.Types.ObjectId(courseId),
+    })
+
+    if (!confirmAssessmentRecord) {
+      assessmentRecord = await AssessmentRecordRepository.create({
+        moduleId,
+        courseId: new mongoose.Types.ObjectId(courseId),
+        userId: new mongoose.Types.ObjectId(locals),
+        score: result,
+        grade: result < 50 ? "failed" : "success",
+      })
+
+      if (!assessmentRecord._id)
+        return { success: false, msg: `Unable to get assessment result` }
+    } else {
+      assessmentRecord =
+        await AssessmentRecordRepository.updateAssessmentRecordDetails(
+          { userId: new mongoose.Types.ObjectId(locals) },
+          {
+            moduleId,
+            courseId: new mongoose.Types.ObjectId(courseId),
+            userId: new mongoose.Types.ObjectId(locals),
+            score: result,
+            grade: result < 50 ? "failed" : "success",
+          }
+        )
+    }
+
+    return {
+      success: true,
+      msg: CourseSuccess.UPDATE,
+      data: { result, grade: assessmentRecord.grade },
+    }
   }
 }
 

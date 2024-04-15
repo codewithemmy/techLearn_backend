@@ -8,10 +8,14 @@ const assessmentRecordSchema = new mongoose.Schema(
     score: {
       type: Number,
     },
-    grade: { string: String, enum: ["failed", "passed"] },
+    grade: { type: String },
     courseId: {
       type: mongoose.Types.ObjectId,
       ref: "Course",
+    },
+    userId: {
+      type: mongoose.Types.ObjectId,
+      ref: "User",
     },
   },
   { timestamps: true }
