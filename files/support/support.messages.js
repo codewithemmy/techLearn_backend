@@ -8,5 +8,5 @@ module.exports.SupportFailure = {
   CREATE: "Unable to send support",
   FETCH: "Unable to fetch support",
   UPDATE: "Unable to update support",
-  CLOSED: "Support/Ticket closed",
+  RESOLVED: "Support/Ticket resolved",
 }

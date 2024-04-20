@@ -43,14 +43,14 @@ class SupportService {
   }
 
   static async updateSupport(payload, supportId) {
-    const support = await SupportRepository.updateAssessmentRecordDetails(
-      { _id: new mongoose.Types.ObjectId(supportId), status: "open" },
+    const support = await SupportRepository.updateSupportDetails(
+      { _id: new mongoose.Types.ObjectId(supportId) },
       { ...payload }
     )
 
     if (!support) return { success: false, msg: SupportFailure.UPDATE }
 
-    return { success: true, msg: SupportSuccess.UPDATE, data: course }
+    return { success: true, msg: SupportSuccess.UPDATE }
   }
 
   static async supportResponse(payload, supportId) {
@@ -61,8 +61,8 @@ class SupportService {
 
     if (!confirmSupport) return { success: false, msg: SupportFailure.FETCH }
 
-    if (confirmSupport === "closed")
-      return { success: false, msg: SupportFailure.CLOSED }
+    if (confirmSupport.status === "resolved")
+      return { success: false, msg: SupportFailure.RESOLVED }
 
     const support = await SupportRepository.updateSupportDetails(
       { _id: new mongoose.Types.ObjectId(supportId) },

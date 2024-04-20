@@ -53,9 +53,9 @@ const queryConstructor = (query, sortBy, item) => {
   let array = Object.keys(query)
   for (let i = 0; i < array.length; i++) {
     if (Object.keys(query)[i] === "id") {
-      params["_id"] = mongoose.Types.ObjectId(Object.values(query)[i])
+      params["_id"] = new mongoose.Types.ObjectId(Object.values(query)[i])
     } else if (Object.keys(query)[i] === "userId") {
-      params[Object.keys(query)[i]] = mongoose.Types.ObjectId(
+      params[Object.keys(query)[i]] = new mongoose.Types.ObjectId(
         Object.values(query)[i]
       )
     } else {
