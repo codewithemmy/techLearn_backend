@@ -16,6 +16,9 @@ const {
   SubscriptionRepository,
 } = require("../../files/subscription/subscription.repository")
 const { UserRepository } = require("../../files/user/user.repository")
+const {
+  NotificationRepository,
+} = require("../../files/notification/notification.repository")
 
 class PaystackPaymentService {
   paymentRequestHandler = RequestHandler.setup({
@@ -144,6 +147,18 @@ class PaystackPaymentService {
       },
       { userType: subscriptionPlan.planType }
     )
+
+    try {
+      await NotificationRepository.createNotification({
+        userId: new mongoose.Types.ObjectId(transaction.userId),
+        recipientId: new mongoose.Types.ObjectId(transaction.userId),
+        recipient: "User",
+        title: "Subscription Plan Successful",
+        message: `You have successfully subscribed for plan- ${subscriptionPlan.title}. You can now enroll for a course. Enjoy your learning journey.`,
+      })
+    } catch (error) {
+      console.log("notification error", error)
+    }
 
     return { success: true, msg: TransactionMessages.PAYMENT_SUCCESS }
   }

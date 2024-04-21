@@ -10,6 +10,9 @@ const { UserRepository } = require("../user/user.repository")
 const {
   AssessmentRecordRepository,
 } = require("../assessment_record/assessmentRecord.repository")
+const {
+  NotificationRepository,
+} = require("../notification/notification.repository")
 
 class CourseService {
   static async createCourse(payload, locals) {
@@ -23,6 +26,16 @@ class CourseService {
 
     if (!course) return { success: false, msg: CourseFailure.CREATE }
 
+    try {
+      await NotificationRepository.createNotification({
+        recipientId: new mongoose.Types.ObjectId(locals._id),
+        recipient: "Admin",
+        title: "Course Created",
+        message: `You have successfully created a course - ${body.title}`,
+      })
+    } catch (error) {
+      console.log("notification error", error)
+    }
     return { success: true, msg: CourseSuccess.CREATE, data: course }
   }
 

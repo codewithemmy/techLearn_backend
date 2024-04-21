@@ -38,7 +38,6 @@ class UserService {
     if (!user._id) return { success: false, msg: UserFailure.CREATE }
 
     try {
-      /** once the created send otp mail for verification, if accountType is citybuilder send otp to phone number*/
       const substitutional_parameters = {
         name: fullName,
         email,
@@ -114,7 +113,7 @@ class UserService {
     if (!user) return { success: false, msg: UserFailure.USER_EXIST }
 
     let otp = AlphaNumeric(4, "number")
-  
+
     //save otp to compare
     user.emailVerificationOtp = await hashPassword(otp)
     await user.save()
