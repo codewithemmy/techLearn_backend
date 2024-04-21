@@ -11,8 +11,10 @@ const {
 const { UserSuccess, UserFailure } = require("../user.messages")
 const { UserRepository } = require("../user.repository")
 const { sendMailNotification } = require("../../../utils/email")
-const { authMessages } = require("../../admin/messages/auth.messages")
 const { AuthSuccess } = require("../../auth/auth.messages")
+const {
+  NotificationRepository,
+} = require("../../notification/notification.repository")
 
 class UserService {
   static async createUser(payload) {
@@ -50,6 +52,13 @@ class UserService {
         substitutional_parameters,
         "VERIFICATION"
       )
+
+      await NotificationRepository.createNotification({
+        recipientId: new mongoose.Types.ObjectId(user._id),
+        recipient: "User",
+        title: "Divvicson: Welcome",
+        message: `You have successfully registered as a user to Divvicson E-Learning platform. Enjoy your ride`,
+      })
     } catch (error) {
       console.log("error", error)
     }
