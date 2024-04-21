@@ -29,12 +29,13 @@ class AssessmentRecordService {
     )
     if (error) return { success: false, msg: error }
 
-    const assessment = await AssessmentRecordRepository.findAllCourseParams({
-      ...params,
-      limit,
-      skip,
-      sort,
-    })
+    const assessment =
+      await AssessmentRecordRepository.findAllAssessmentRecordParams({
+        ...params,
+        limit,
+        skip,
+        sort,
+      })
 
     if (!assessment)
       return { success: true, msg: AssessmentRecordFailure.FETCH, data: [] }

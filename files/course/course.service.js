@@ -260,6 +260,7 @@ class CourseService {
     let assessmentRecord
     const confirmAssessmentRecord = await AssessmentRecordRepository.fetchOne({
       moduleId,
+      moduleTitle: course.modules.module,
       userId: new mongoose.Types.ObjectId(locals),
       courseId: new mongoose.Types.ObjectId(courseId),
     })
@@ -267,6 +268,7 @@ class CourseService {
     if (!confirmAssessmentRecord) {
       assessmentRecord = await AssessmentRecordRepository.create({
         moduleId,
+        moduleTitle: course.modules.module,
         courseId: new mongoose.Types.ObjectId(courseId),
         userId: new mongoose.Types.ObjectId(locals),
         score: result,

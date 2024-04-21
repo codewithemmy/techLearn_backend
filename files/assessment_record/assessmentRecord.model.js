@@ -5,6 +5,7 @@ const assessmentRecordSchema = new mongoose.Schema(
     moduleId: {
       type: String,
     },
+    moduleTitle: { type: String },
     score: {
       type: Number,
     },

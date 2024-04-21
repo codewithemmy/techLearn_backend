@@ -21,6 +21,7 @@ class AssessmentRecordRepository {
     const { limit, skip, sort, ...restOfPayload } = payload
 
     const assessmentRecord = await AssessmentRecord.find({ ...restOfPayload })
+      .populate({ path: "userId", select: "username email" })
       .sort(sort)
       .skip(skip)
       .limit(limit)
