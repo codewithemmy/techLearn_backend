@@ -23,7 +23,10 @@ class UserRepository {
   static async findAllUsersParams(userPayload) {
     const { limit, skip, sort, ...restOfPayload } = userPayload
 
-    const user = await User.find({ ...restOfPayload }, { password: 0 })
+    const user = await User.find(
+      { ...restOfPayload },
+      { password: 0, paystackCardDetails: 0 }
+    )
       .sort(sort)
       .skip(skip)
       .limit(limit)

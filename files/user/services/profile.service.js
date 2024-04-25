@@ -9,6 +9,9 @@ const { UserRepository } = require("../user.repository")
 const {
   NotificationRepository,
 } = require("../../notification/notification.repository")
+const {
+  SubscriptionPlanRepository,
+} = require("../../subscription_plan/subscriptionPlan.repository")
 
 class ProfileService {
   static async userUpdate(payload, locals) {
@@ -39,6 +42,19 @@ class ProfileService {
       extra = { _id: new mongoose.Types.ObjectId(locals._id) }
     }
 
+    if (params.paystackCardDetails) {
+      const cardDetails = await UserRepository.findUserWithParams({ ...extra })
+
+      if (cardDetails.length < 1)
+        return { success: true, msg: UserFailure.FETCH, data: [] }
+
+      return {
+        success: true,
+        msg: UserSuccess.FETCH,
+        data: cardDetails[0].paystackCardDetails,
+      }
+    }
+
     const allUsers = await UserRepository.findAllUsersParams({
       ...params,
       ...extra,
@@ -47,7 +63,8 @@ class ProfileService {
       sort,
     })
 
-    if (allUsers.length < 1) return { success: false, msg: UserFailure.FETCH }
+    if (allUsers.length < 1)
+      return { success: true, msg: UserFailure.FETCH, data: [] }
 
     return { success: true, msg: UserSuccess.FETCH, data: allUsers }
   }
@@ -85,6 +102,22 @@ class ProfileService {
     }
 
     return { success: true, msg: UserSuccess.UPDATE }
+  }
+
+  static async userSubscriptionPlanService(payload) {
+    const user = await UserRepository.findSingleUserWithParams({
+      _id: new mongoose.Types.ObjectId(payload),
+    })
+
+    if (!user) return { success: false, msg: UserFailure.FETCH }
+
+    const subscription = await SubscriptionPlanRepository.fetchOne({
+      planType: user.userType,
+    })
+    if (!subscription)
+      return { success: true, msg: UserFailure.FETCH, data: [] }
+
+    return { success: true, msg: UserSuccess.FETCH, data: subscription }
   }
 }
 

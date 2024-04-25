@@ -19,6 +19,7 @@ const {
   updateUserController,
   getUserController,
   changePasswordController,
+  subscriptionPlanController,
 } = require("./controllers/profile.controller")
 
 //routes
@@ -37,6 +38,7 @@ userRoute
   .patch(uploadManager("profileImage").single("image"), updateUserController)
 
 userRoute.route("/").get(getUserController)
+userRoute.route("/subscription-plan").get(subscriptionPlanController)
 userRoute.route("/change-password").patch(changePasswordController)
 
 module.exports = userRoute
