@@ -62,6 +62,17 @@ const userSchema = new mongoose.Schema(
       type: mongoose.Types.ObjectId,
       ref: "Course",
     },
+    paystackCardDetails: {
+      authorization: String,
+      bin: String,
+      last4: String,
+      expMonth: String,
+      expYear: String,
+      channel: String,
+      cardType: String,
+      bank: String,
+      accountName: String,
+    },
   },
   { timestamps: true }
 )

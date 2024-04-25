@@ -96,7 +96,6 @@ class PaystackPaymentService {
 
   async verifyCardPayment(payload) {
     //check success of transaction
-    console.log("verification payload", payload)
     const { data } = payload
     const transaction = await TransactionRepository.fetchOne({
       reference: data.reference,
@@ -141,12 +140,23 @@ class PaystackPaymentService {
       expiresAt: futureDateISOString,
     })
 
+    const { authorization } = data
     // upgrade user plan type
     await UserRepository.updateUserDetails(
       {
         _id: new mongoose.Types.ObjectId(transaction.userId),
       },
-      { userType: subscriptionPlan.planType }
+      {
+        userType: subscriptionPlan.planType,
+        "paystackCardDetails.authorization": authorization.authorization_code,
+        "paystackCardDetails.bin": authorization.bin,
+        "paystackCardDetails.last4": authorization.last4,
+        "paystackCardDetails.expMonth": authorization.exp_month,
+        "paystackCardDetails.channel": authorization.channel,
+        "paystackCardDetails.cardType": authorization.card_type,
+        "paystackCardDetails.bank": authorization.bank,
+        "paystackCardDetails.accountName": authorization.account_name,
+      }
     )
 
     try {
