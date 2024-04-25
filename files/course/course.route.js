@@ -25,7 +25,7 @@ courseRoute
 
 courseRoute
   .route("/:id")
-  .patch(videoManager("courseVideo").single("video"), updateCourseController)
+  .patch(uploadManager("image").single("image"), updateCourseController)
 
 courseRoute
   .route("/module/:id")

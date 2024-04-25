@@ -87,9 +87,7 @@ class CourseService {
     const { image, body } = payload
     const course = await CourseRepository.updateCourseDetails(
       { _id: new mongoose.Types.ObjectId(locals) },
-      {
-        $push: { modules: { ...body, video: image } },
-      }
+      { ...body, courseCover: image }
     )
 
     if (!course) return { success: false, msg: CourseFailure.UPDATE }
@@ -107,6 +105,7 @@ class CourseService {
       {
         $set: {
           "modules.$.module": body.module,
+          "modules.$.moduleNumber": body.moduleNumber,
           "modules.$.overview": body.overview,
           "modules.$.lessonNoteTitle": body.lessonNoteTitle,
           "modules.$.lessonNoteContent": body.lessonNoteContent,

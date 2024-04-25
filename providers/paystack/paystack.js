@@ -96,6 +96,7 @@ class PaystackPaymentService {
 
   async verifyCardPayment(payload) {
     //check success of transaction
+    console.log("verification payload", payload)
     const { data } = payload
     const transaction = await TransactionRepository.fetchOne({
       reference: data.reference,

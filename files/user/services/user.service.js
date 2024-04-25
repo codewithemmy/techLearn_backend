@@ -3,8 +3,6 @@ const {
   hashPassword,
   tokenHandler,
   verifyPassword,
-  sanitizePhoneNumber,
-  generateOtp,
   AlphaNumeric,
 } = require("../../../utils")
 
@@ -21,7 +19,6 @@ class UserService {
     const { email, fullName } = payload
     let validateEmail
 
-    // const { phone } = sanitizePhoneNumber(phoneNumber)
     validateEmail = await UserRepository.validateUser({
       email: email,
     })

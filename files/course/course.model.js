@@ -12,6 +12,7 @@ const courseSchema = new mongoose.Schema(
     modules: [
       {
         module: { type: String },
+        moduleNumber: { type: Number },
         lessonNoteTitle: { type: String },
         lessonNoteContent: { type: String },
         assessmentInstruction: { type: String },

@@ -63,7 +63,8 @@ class ProfileService {
 
     const isPassword = await verifyPassword(currentPassword, user.password)
 
-    if (!isPassword) return { success: false, msg: UserFailure.UPDATE }
+    if (!isPassword)
+      return { success: false, msg: `Current password incorrect` }
 
     user.password = await hashPassword(newPassword)
     const updateUser = await user.save()
