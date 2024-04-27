@@ -97,7 +97,6 @@ class CourseService {
 
   //update modules
   static async updateCourseModule(payload, moduleId) {
-    // 6606cd43d5ed1a4ae37005a4
     const { image, body } = payload
 
     const course = await CourseRepository.updateCourseDetails(
@@ -122,7 +121,36 @@ class CourseService {
         msg: `Unable to update or possibly  wrong  module id`,
       }
 
-    return { success: true, msg: CourseSuccess.UPDATE, data: course }
+    return { success: true, msg: CourseSuccess.UPDATE }
+  }
+
+  //update modules
+  static async updateModule(payload, courseId) {
+    const { image, body } = payload
+
+    const course = await CourseRepository.updateCourseDetails(
+      { _id: new mongoose.Types.ObjectId(courseId) },
+      {
+        $addToSet: {
+          modules: {
+            module: body.module,
+            moduleNumber: body.moduleNumber,
+            lessonNoteTitle: body.lessonNoteTitle,
+            lessonNoteContent: body.lessonNoteContent,
+            assessmentInstruction: body.assessmentInstruction,
+            assessment: body.assessment,
+            video: image,
+          },
+        },
+      }
+    )
+    if (!course)
+      return {
+        success: false,
+        msg: `Unable to update or possibly  wrong  module id`,
+      }
+
+    return { success: true, msg: `Module updated successfully` }
   }
 
   //update modules assessment

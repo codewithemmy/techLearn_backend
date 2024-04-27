@@ -114,7 +114,7 @@ class ProfileService {
     const subscription = await SubscriptionPlanRepository.fetchOne({
       planType: user.userType,
     })
-    if (!subscription)
+    if (!subscription.planType === user.userType)
       return { success: true, msg: UserFailure.FETCH, data: [] }
 
     return { success: true, msg: UserSuccess.FETCH, data: subscription }
