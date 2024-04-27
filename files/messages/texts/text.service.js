@@ -6,12 +6,26 @@ const { TextRepository } = require("./text.repository")
 const { TextMessages } = require("./text.messages")
 const { AdminRepository } = require("../../admin/admin.repository")
 const { queryConstructor } = require("../../../utils")
+const {
+  SubscriptionRepository,
+} = require("../../subscription/subscription.repository")
 
 class TextService {
   static async sendText(payload, textPayload) {
     const { courseId, message, sentBy } = payload
 
     if (!courseId) return { success: false, msg: `CourseId not found` }
+    if (sentBy == "User") {
+      const subscription = await SubscriptionRepository.fetchOne({
+        userId: new mongoose.Types.ObjectId(textPayload._id),
+      })
+
+      if (!subscription)
+        return {
+          success: false,
+          msg: `User not eligible to send chat for this course`,
+        }
+    }
 
     const { _id } = textPayload
 
