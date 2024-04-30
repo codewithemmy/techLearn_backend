@@ -7,6 +7,7 @@ const transactionRoute = require("../files/transaction/transaction.route")
 const textRoute = require("../files/messages/texts/text.route")
 const assessmentRoute = require("../files/assessment_record/assessmentRecord.route")
 const supportRoute = require("../files/support/support.route")
+const contactRoute = require("../files/contact/contact.route")
 
 const routes = (app) => {
   const base_url = "/api/v1"
@@ -20,6 +21,7 @@ const routes = (app) => {
   app.use(`${base_url}/chat`, textRoute)
   app.use(`${base_url}/assessment`, assessmentRoute)
   app.use(`${base_url}/support`, supportRoute)
+  app.use(`${base_url}/contact`, contactRoute)
 }
 
 module.exports = routes

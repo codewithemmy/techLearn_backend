@@ -5,6 +5,12 @@ const courseSchema = new mongoose.Schema(
     title: {
       type: String,
     },
+    duration: {
+      type: String,
+    },
+    hour: {
+      type: String,
+    },
     courseCover: {
       type: String,
     },
