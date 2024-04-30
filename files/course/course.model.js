@@ -8,6 +8,12 @@ const courseSchema = new mongoose.Schema(
     duration: {
       type: String,
     },
+    jobOpening: {
+      type: String,
+    },
+    medianSalary: {
+      type: String,
+    },
     hour: {
       type: String,
     },
