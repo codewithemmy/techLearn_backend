@@ -34,6 +34,7 @@ const updateCourseController = async (req, res, next) => {
   const [error, data] = await manageAsyncOps(
     CourseService.updateCourse(value, req.params.id)
   )
+
   if (error) return next(error)
 
   if (!data.success) return next(new CustomError(data.msg, BAD_REQUEST, data))
@@ -46,7 +47,7 @@ const updateCourseModuleController = async (req, res, next) => {
   const [error, data] = await manageAsyncOps(
     CourseService.updateCourseModule(value, req.params.id)
   )
-
+  console.log("error", error)
   if (error) return next(error)
 
   if (!data.success) return next(new CustomError(data.msg, BAD_REQUEST, data))

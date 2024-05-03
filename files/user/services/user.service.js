@@ -92,6 +92,7 @@ class UserService {
       isAdmin: false,
       userType: user.userType,
       _id: user._id,
+      userType: user.userType,
       fullName: user.fullName,
       email: user.email,
     })
@@ -106,6 +107,7 @@ class UserService {
         firstName: user.firstName,
         lastName: user.lastName,
         email: user.email,
+        userType: user.userType,
         ...token,
       },
     }
