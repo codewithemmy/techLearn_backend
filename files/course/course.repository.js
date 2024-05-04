@@ -28,6 +28,13 @@ class CourseRepository {
     return course
   }
 
+  /// getting single module
+  static async findSingleModule(payload) {
+    const module = await Course.findById({ ...payload })
+
+    return module
+  }
+
   static async updateCourseDetails(params, payload) {
     const course = await Course.findOneAndUpdate(
       {

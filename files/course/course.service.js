@@ -83,6 +83,29 @@ class CourseService {
     }
   }
 
+  static async getSingleModule(payload) {
+    const { courseId, moduleId } = payload
+    const course = await CourseRepository.fetchOne({
+      _id: new mongoose.Types.ObjectId(courseId),
+    })
+
+    if (!course) return { success: true, msg: CourseFailure.FETCH, data: [] }
+
+    // Find the module within the course by its ID
+    const courseModule = course.modules.find(
+      (m) => m._id.toString() === moduleId
+    )
+
+    if (!courseModule)
+      return { success: true, msg: `module not available`, data: [] }
+
+    return {
+      success: true,
+      msg: `Module fetched  successfully `,
+      data: courseModule,
+    }
+  }
+
   static async updateCourse(payload, locals) {
     const { image, body } = payload
     const course = await CourseRepository.updateCourseDetails(

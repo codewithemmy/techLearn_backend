@@ -11,6 +11,7 @@ const {
   courseStudentController,
   moduleAssessmentController,
   updateModuleController,
+  getSingleModuleController,
 } = require("./course.controller")
 
 courseRoute.use(isAuthenticated)
@@ -40,6 +41,10 @@ courseRoute
   .patch(videoManager("courseVideo").single("video"), updateModuleController)
 
 courseRoute.route("/module/assessment/:id").patch(updateAssessmentController)
+
+courseRoute
+  .route("/module/:courseId/:moduleId")
+  .get(getSingleModuleController)
 
 courseRoute.route("/").get(getCourseController)
 
