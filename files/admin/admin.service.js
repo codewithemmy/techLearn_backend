@@ -111,7 +111,7 @@ class AdminAuthService {
     )
     if (error) return { success: false, msg: error }
 
-    const getAdmin = await AdminRepository.findAdminParams({
+    let getAdmin = await AdminRepository.findAdminParams({
       ...params,
       limit,
       skip,
@@ -120,8 +120,40 @@ class AdminAuthService {
 
     if (getAdmin.length < 1)
       return { success: false, msg: authMessages.ADMIN_NOT_FOUND }
+    let newAdminData = []
+    if (params.role === "instructor") {
+      // Iterate over each admin document
+      for (const admin of getAdmin) {
+        // Count users with matching courseId
+        let standardStudent = await UserRepository.countUser({
+          courseId: admin.courseId,
+          userType: "standard",
+        })
 
-    return { success: true, msg: authMessages.ADMIN_FOUND, data: getAdmin }
+        let premiumStudent = await UserRepository.countUser({
+          courseId: admin.courseId,
+          userType: "premium",
+        })
+        newAdminData.push({
+          ...admin._doc,
+          currentStudent: `${standardStudent} standard & ${premiumStudent} premium student`,
+        })
+      }
+
+      return {
+        success: true,
+        msg: authMessages.ADMIN_FOUND,
+        data: newAdminData,
+        count: newAdminData.length,
+      }
+    }
+
+    return {
+      success: true,
+      msg: authMessages.ADMIN_FOUND,
+      data: getAdmin,
+      count: getAdmin.length,
+    }
   }
 
   static async updateAdminService(data, id) {

@@ -20,6 +20,10 @@ class UserRepository {
     return User.exists({ ...userPayload })
   }
 
+  static async countUser(userPayload) {
+    return User.countDocuments({ ...userPayload })
+  }
+
   static async findAllUsersParams(userPayload) {
     const { limit, skip, sort, ...restOfPayload } = userPayload
 

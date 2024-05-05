@@ -66,7 +66,12 @@ class ProfileService {
     if (allUsers.length < 1)
       return { success: true, msg: UserFailure.FETCH, data: [] }
 
-    return { success: true, msg: UserSuccess.FETCH, data: allUsers }
+    return {
+      success: true,
+      msg: UserSuccess.FETCH,
+      data: allUsers,
+      count: allUsers.length,
+    }
   }
 
   static async changePassword(body, locals) {
