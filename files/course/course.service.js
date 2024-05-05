@@ -209,7 +209,7 @@ class CourseService {
     const validateSubscription = await SubscriptionRepository.fetchOne({
       userId: new mongoose.Types.ObjectId(locals._id),
       status: "active",
-      expiresAt: { $gte: currentDate },
+      expiresAt: { $gt: currentDate },
     })
 
     if (!validateSubscription)

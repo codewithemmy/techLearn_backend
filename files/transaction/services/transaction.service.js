@@ -13,6 +13,9 @@ const { queryConstructor } = require("../../../utils")
 const {
   SubscriptionPlanRepository,
 } = require("../../subscription_plan/subscriptionPlan.repository")
+const {
+  SubscriptionRepository,
+} = require("../../subscription/subscription.repository")
 
 class TransactionService {
   static paymentProvider
@@ -27,6 +30,18 @@ class TransactionService {
     const user = await UserRepository.findSingleUserWithParams({
       _id: new mongoose.Types.ObjectId(userId),
     })
+    if (!user) return { success: false, msg: `Invalid userId` }
+
+    const existingSubscription = await SubscriptionRepository.fetchOne({
+      userId: new mongoose.Types.ObjectId(userId),
+      status: "active",
+    })
+
+    if (existingSubscription)
+      return {
+        return: false,
+        msg: `User currently have a valid subscription`,
+      }
 
     const subscriptionPlan = await SubscriptionPlanRepository.fetchOne({
       _id: new mongoose.Types.ObjectId(subscriptionPlanId),
