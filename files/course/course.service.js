@@ -182,7 +182,7 @@ class CourseService {
 
     const course = await CourseRepository.updateCourseDetails(
       { "modules._id": moduleId },
-      { $push: { "modules.0.assessment": { question, options, answer } } }
+      { $push: { "modules.$.assessment": { question, options, answer } } }
     )
 
     if (!course)
