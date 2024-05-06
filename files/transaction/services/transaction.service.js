@@ -83,7 +83,7 @@ class TransactionService {
     }
   }
 
-  static async getTransactionService(payload) {
+  static async getTransactionService(payload, locals) {
     const { error, params, limit, skip, sort } = queryConstructor(
       payload,
       "createdAt",
@@ -93,6 +93,7 @@ class TransactionService {
 
     const transaction = await TransactionRepository.fetchTransactionsByParams({
       ...params,
+      userId: new mongoose.Types.ObjectId(locals),
       limit,
       skip,
       sort,

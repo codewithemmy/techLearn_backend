@@ -20,7 +20,7 @@ const paymentTransactionController = async (req, res, next) => {
 
 const getTransactionController = async (req, res, next) => {
   const [error, data] = await manageAsyncOps(
-    TransactionService.getTransactionService(req.query)
+    TransactionService.getTransactionService(req.query, res.locals.jwt._id)
   )
 
   if (error) return next(error)
