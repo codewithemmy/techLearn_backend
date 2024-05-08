@@ -25,7 +25,13 @@ class TransactionService {
   }
 
   static async initiatePaymentTransaction(payload) {
-    const { userId, email, subscriptionPlanId, extras = {} } = payload
+    const {
+      userId,
+      email,
+      subscriptionPlanId,
+      callbackUrl,
+      extras = {},
+    } = payload
 
     const user = await UserRepository.findSingleUserWithParams({
       _id: new mongoose.Types.ObjectId(userId),
@@ -56,6 +62,7 @@ class TransactionService {
     await this.getConfig()
     const paymentDetails = await this.paymentProvider.initiatePayment({
       email,
+      callbackUrl,
       amount: subscriptionPlan.amount,
     })
 

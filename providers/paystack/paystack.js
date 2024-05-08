@@ -65,7 +65,7 @@ class PaystackPaymentService {
   }
 
   async initiatePayment(paymentPayload) {
-    const { email, amount } = paymentPayload
+    const { email, amount, callbackUrl } = paymentPayload
     const modifiedAmount = `${amount}00`
     const paystackResponse = await this.paymentRequestHandler({
       method: "POST",
@@ -73,6 +73,7 @@ class PaystackPaymentService {
       data: {
         amount: modifiedAmount,
         email,
+        callback_url: callbackUrl,
       },
     })
 
