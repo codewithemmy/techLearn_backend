@@ -10,6 +10,9 @@ const { authMessages } = require("./messages/auth.messages")
 const { adminMessages } = require("./messages/admin.messages")
 const { UserRepository } = require("../user/user.repository")
 const { sendMailNotification } = require("../../utils/email")
+const {
+  TransactionRepository,
+} = require("../transaction/transaction.repository")
 
 class AdminAuthService {
   static async adminSignUpService(body) {
@@ -257,6 +260,72 @@ class AdminAuthService {
     getAdmin.password = undefined
 
     return { success: true, msg: authMessages.ADMIN_FOUND, data: getAdmin }
+  }
+
+  static async dashboardAnalysisService() {
+    const revenue = await TransactionRepository.fetchTransactionsByParams({
+      status: "confirmed",
+    })
+
+    const instructor = await AdminRepository.findAdminParams({
+      role: "instructor",
+    })
+
+    const user = await UserRepository.findAllUsersParams({})
+
+    if (revenue.length < 1)
+      return { success: true, msg: `Revenue not currently available`, date: [] }
+    if (instructor.length < 1)
+      return {
+        success: true,
+        msg: `Instructors not currently available`,
+        date: [],
+      }
+    if (user.length < 1)
+      return { success: true, msg: `Users not currently available`, date: [] }
+
+    let totalRevenue = revenue.reduce((total, totalAmount) => {
+      return total + totalAmount.amount
+    }, 0)
+
+    let premiumPlan = revenue.filter((result) => {
+      return result.subscriptionPlanId.planType === "Premium Plan"
+    })
+
+    let premiumProfit = premiumPlan.reduce((total, totalAmount) => {
+      return total + totalAmount.amount
+    }, 0)
+
+    let standardPlan = revenue.filter((result) => {
+      return result.subscriptionPlanId.planType === "Standard"
+    })
+
+    let standardProfit = premiumPlan.reduce((total, totalAmount) => {
+      return total + totalAmount.amount
+    }, 0)
+
+    // calculate the percentage for subscription used
+    let premiumPercent = (premiumPlan.length / revenue.length) * 100
+    let standardPercent = (standardPlan.length / revenue.length) * 100
+
+    return {
+      success: true,
+      msg: authMessages.ADMIN_FOUND,
+      data: {
+        totalRevenue,
+        totalOrders: revenue.length,
+        instructors: instructor.length,
+        users: user.length,
+      },
+      bestSellers: {
+        premium: { sold: premiumPlan.length, profit: premiumProfit },
+        standard: { sold: standardPlan.length, profit: standardProfit },
+      },
+      percentage: {
+        standard: standardPercent.toFixed(2),
+        premium: premiumPercent.toFixed(2),
+      },
+    }
   }
 }
 

@@ -62,10 +62,23 @@ const updateAdminController = async (req, res, next) => {
   return responseHandler(res, 200, data)
 }
 
+const dashboardAnalysisController = async (req, res, next) => {
+  const [error, data] = await manageAsyncOps(
+    AdminAuthService.dashboardAnalysisService()
+  )
+  console.log("error", error)
+  if (error) return next(error)
+
+  if (!data.success) return next(new CustomError(data.msg, 400, data))
+
+  return responseHandler(res, 200, data)
+}
+
 module.exports = {
   adminSignUpController,
   adminLogin,
   updateAdminController,
   getAdminController,
   getLoggedInAdminController,
+  dashboardAnalysisController,
 }

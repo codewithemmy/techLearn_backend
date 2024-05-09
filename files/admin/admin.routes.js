@@ -9,6 +9,7 @@ const {
   updateAdminController,
   getLoggedInAdminController,
   getAdminController,
+  dashboardAnalysisController,
 } = require("./admin.controller")
 
 //admin route
@@ -22,5 +23,8 @@ adminRoute.route("/me").get(getLoggedInAdminController)
 adminRoute
   .route("/")
   .patch(uploadManager("profileImage").single("image"), updateAdminController)
+
+//dashboard analysis
+adminRoute.route("/dashboard").get(dashboardAnalysisController)
 
 module.exports = adminRoute
