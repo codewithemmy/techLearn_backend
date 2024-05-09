@@ -66,6 +66,14 @@ class CourseService {
       extra = { _id: new mongoose.Types.ObjectId(instructorCourse._id) }
     }
 
+    if (!locals.isAdmin) {
+      const user = await UserRepository.findSingleUserWithParams({
+        _id: new mongoose.Types.ObjectId(locals._id),
+      })
+
+      extra = { _id: new mongoose.Types.ObjectId(user.courseId) }
+    }
+
     const course = await CourseRepository.findAllCourseParams({
       ...params,
       ...extra,
