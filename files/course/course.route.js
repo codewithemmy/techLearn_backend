@@ -13,6 +13,7 @@ const {
   updateModuleController,
   userEnrolledCourseController,
   getSingleModuleController,
+  virtualClassRequestController,
 } = require("./course.controller")
 
 courseRoute.use(isAuthenticated)
@@ -58,5 +59,8 @@ courseRoute.route("/user-course").get(userEnrolledCourseController)
 
 //module assessment or test
 courseRoute.route("/module-assessment").post(moduleAssessmentController)
+
+//virtual class request
+courseRoute.route("/virtual-class-request").get(virtualClassRequestController)
 
 module.exports = courseRoute

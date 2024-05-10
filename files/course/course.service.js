@@ -298,6 +298,46 @@ class CourseService {
     return { success: true, msg: CourseSuccess.FETCH, data: course }
   }
 
+  //user virtual class request code
+  static async virtualClassRequest(payload) {
+    const user = await UserRepository.findSingleUserWithParams({
+      _id: new mongoose.Types.ObjectId(payload),
+    })
+
+    if (!user) return { success: false, msg: `Invalid User` }
+
+    const course = await CourseRepository.fetchOne({
+      _id: new mongoose.Types.ObjectId(user.courseId),
+    })
+
+    if (!course)
+      return {
+        success: false,
+        msg: `User currently has not active course`,
+      }
+
+    //get course instructor
+    const instructor = await AdminRepository.fetchAdmin({
+      courseId: new mongoose.Types.ObjectId(course._id),
+    })
+
+    if (!instructor)
+      return { success: false, msg: `Instructor for course not available` }
+
+    try {
+      await NotificationRepository.createNotification({
+        recipientId: new mongoose.Types.ObjectId(instructor._id),
+        recipient: "Admin",
+        title: "Course Code Request",
+        message: `Hello ${instructor.firstName} - Your student: ${user.firstName} is requesting to join your class. Kindly revert `,
+      })
+    } catch (error) {
+      console.log("notification error", error)
+    }
+
+    return { success: true, msg: `Virtual class request successful sent` }
+  }
+
   //module assessment or test
   static async moduleAssessmentTest(payload, locals) {
     const { courseId, moduleId, answer } = payload

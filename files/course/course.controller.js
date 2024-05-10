@@ -141,6 +141,17 @@ const getSingleModuleController = async (req, res, next) => {
   return responseHandler(res, SUCCESS, data)
 }
 
+const virtualClassRequestController = async (req, res, next) => {
+  const [error, data] = await manageAsyncOps(
+    CourseService.virtualClassRequest(res.locals.jwt._id)
+  )
+  if (error) return next(error)
+
+  if (!data.success) return next(new CustomError(data.msg, BAD_REQUEST, data))
+
+  return responseHandler(res, SUCCESS, data)
+}
+
 module.exports = {
   createCourseController,
   getCourseController,
@@ -153,4 +164,5 @@ module.exports = {
   updateModuleController,
   getSingleModuleController,
   userEnrolledCourseController,
+  virtualClassRequestController,
 }
