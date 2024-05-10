@@ -7,6 +7,8 @@ const compression = require("compression")
 const mongoSanitize = require("express-mongo-sanitize")
 const emailValidation = require("./emailCheck")
 const routes = require("./routes")
+const session = require("express-session")
+const passport = require("passport")
 
 const app = express()
 
@@ -19,6 +21,16 @@ const application = (io) => {
   app.use(compression())
   app.use(cors())
   app.use(emailValidation)
+  app.use(
+    session({
+      secret: process.env.SESSION_ID,
+      resave: false,
+      saveUninitialized: true,
+      cookie: { secure: false },
+    })
+  )
+  app.use(passport.initialize())
+  app.use(passport.session())
 
   //app
   app.use((req, res, next) => {
