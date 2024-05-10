@@ -262,25 +262,35 @@ class AdminAuthService {
     return { success: true, msg: authMessages.ADMIN_FOUND, data: getAdmin }
   }
 
-  static async dashboardAnalysisService() {
+  static async dashboardAnalysisService(query) {
+    const { from, to } = query
+    let extra = {}
+    if (from && to) {
+      let start = new Date(from)
+      let end = new Date(to)
+      end.setHours(0, 0, 0, 0)
+      extra = {
+        createdAt: {
+          $gte: start,
+          $lte: new Date(end.getTime() + 24 * 60 * 60 * 1000),
+        },
+      }
+    }
+
     const revenue = await TransactionRepository.fetchTransactionsByParams({
       status: "confirmed",
+      ...extra,
     })
 
     const instructor = await AdminRepository.findAdminParams({
       role: "instructor",
     })
 
-    const user = await UserRepository.findAllUsersParams({})
+    const user = await UserRepository.findAllUsersParams({ ...extra })
 
     if (revenue.length < 1)
       return { success: true, msg: `Revenue not currently available`, date: [] }
-    if (instructor.length < 1)
-      return {
-        success: true,
-        msg: `Instructors not currently available`,
-        date: [],
-      }
+
     if (user.length < 1)
       return { success: true, msg: `Users not currently available`, date: [] }
 
@@ -314,8 +324,8 @@ class AdminAuthService {
       data: {
         totalRevenue,
         totalOrders: revenue.length,
-        instructors: instructor.length,
-        users: user.length,
+        instructors: instructor.length < 1 ? 0 : instructor.length,
+        users: user.length < 1 ? 0 : user.length,
       },
       bestSellers: {
         premium: { sold: premiumPlan.length, profit: premiumProfit },
