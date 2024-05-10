@@ -11,6 +11,7 @@ const {
   courseStudentController,
   moduleAssessmentController,
   updateModuleController,
+  userEnrolledCourseController,
   getSingleModuleController,
 } = require("./course.controller")
 
@@ -42,9 +43,7 @@ courseRoute
 
 courseRoute.route("/module/assessment/:id").patch(updateAssessmentController)
 
-courseRoute
-  .route("/module/:courseId/:moduleId")
-  .get(getSingleModuleController)
+courseRoute.route("/module/:courseId/:moduleId").get(getSingleModuleController)
 
 courseRoute.route("/").get(getCourseController)
 
@@ -53,6 +52,9 @@ courseRoute.route("/enroll/:id").post(studentEnrollmentController)
 
 //course student
 courseRoute.route("/student/:id").get(courseStudentController)
+
+//course student
+courseRoute.route("/user-course").get(userEnrolledCourseController)
 
 //module assessment or test
 courseRoute.route("/module-assessment").post(moduleAssessmentController)

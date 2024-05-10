@@ -274,7 +274,28 @@ class CourseService {
         data: [],
       }
 
-    return { success: true, msg: CourseSuccess.UPDATE, data: student }
+    return { success: true, msg: CourseSuccess.FETCH, data: student }
+  }
+
+  //user enrolled course
+  static async userEnrolledCourse(payload) {
+    const user = await UserRepository.findSingleUserWithParams({
+      _id: new mongoose.Types.ObjectId(payload),
+    })
+
+    if (!user) return { success: false, msg: `Invalid User` }
+
+    const course = await CourseRepository.fetchOne({
+      _id: new mongoose.Types.ObjectId(user.courseId),
+    })
+
+    if (!course)
+      return {
+        success: false,
+        msg: `User currently has not active course`,
+      }
+
+    return { success: true, msg: CourseSuccess.FETCH, data: course }
   }
 
   //module assessment or test
