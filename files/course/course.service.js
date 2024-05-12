@@ -306,6 +306,7 @@ class CourseService {
 
     if (!user) return { success: false, msg: `Invalid User` }
 
+    //check user type
     if (user.userType !== "premium")
       return {
         success: false,
