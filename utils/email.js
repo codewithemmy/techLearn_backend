@@ -5,6 +5,7 @@ const path = require("path")
 const { AuthSuccess, AuthFailure } = require("../files/auth/auth.messages")
 handlebars.registerHelper("eq", (a, b) => a == b)
 
+//set up mail transport
 const mailTransport = nodemailer.createTransport({
   host: process.env.SMS_HOST,
   port: process.env.SMS_PORT,
