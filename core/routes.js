@@ -10,6 +10,7 @@ const supportRoute = require("../files/support/support.route")
 const contactRoute = require("../files/contact/contact.route")
 const notificationRoute = require("../files/notification/notification.route")
 const googleRoute = require("../files/google_auth/google.route")
+const facebookRoute = require("../files/facebook_auth/facebook.route")
 
 const routes = (app) => {
   const base_url = "/api/v1"
@@ -26,6 +27,7 @@ const routes = (app) => {
   app.use(`${base_url}/contact`, contactRoute)
   app.use(`${base_url}/notification`, notificationRoute)
   app.use("", googleRoute)
+  app.use("", facebookRoute)
 }
 
 module.exports = routes

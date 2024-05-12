@@ -306,6 +306,12 @@ class CourseService {
 
     if (!user) return { success: false, msg: `Invalid User` }
 
+    if (user.userType !== "premium")
+      return {
+        success: false,
+        msg: `Only premium users are allowed to request for a virtual class link`,
+      }
+
     const course = await CourseRepository.fetchOne({
       _id: new mongoose.Types.ObjectId(user.courseId),
     })
@@ -361,18 +367,16 @@ class CourseService {
 
     // Map only the assessment array from the module and console.log it
     const assessmentArray = courseModule.assessment.map((question) => question)
-
     // Initialize an empty array to store the results
     let result = 0
-
+    let assessmentLength = 0
     // Iterate through both arrays and compare elements
     answer.forEach((payloadAnswer, index) => {
       // Compare the payload answer with the corresponding assessment answer
-      console.log(
-        `Comparing payloadAnswer: ${payloadAnswer} with assessmentAnswer: ${assessmentArray[index].answer}`
-      )
       if (payloadAnswer === assessmentArray[index].answer) {
-        result += 10
+        assessmentLength += 1
+        let scorePercentage = (assessmentLength / answer.length) * 100
+        result = scorePercentage
       }
     })
 

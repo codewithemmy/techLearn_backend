@@ -83,7 +83,7 @@ const studentEnrollmentController = async (req, res, next) => {
   const [error, data] = await manageAsyncOps(
     CourseService.studentCourseEnrollment(req.params.id, res.locals.jwt)
   )
-  console.log("error", error)
+
   if (error) return next(error)
 
   if (!data.success) return next(new CustomError(data.msg, BAD_REQUEST, data))
