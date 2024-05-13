@@ -16,6 +16,7 @@ const {
 class ProfileService {
   static async userUpdate(payload, locals) {
     const { image, body } = payload
+
     const updateUser = await UserRepository.updateUserDetails(
       { _id: locals._id },
       {

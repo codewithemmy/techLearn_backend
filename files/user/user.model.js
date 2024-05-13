@@ -43,7 +43,7 @@ const userSchema = new mongoose.Schema(
     dateOfBirth: {
       type: String,
     },
-    postCode: { type: String },
+    postalCode: { type: String },
     profileImage: { type: String },
     userType: {
       type: String,
