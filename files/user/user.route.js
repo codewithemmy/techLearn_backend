@@ -1,11 +1,12 @@
-// const { uploadManager } = require("../../utils/multer")
-// const { checkSchema } = require("express-validator")
-// const { validate } = require("../../validations/validate")
 const userRoute = require("express").Router()
 const { isAuthenticated } = require("../../utils")
-const { uploadManager } = require("../../utils/multer")
-// const { isAuthenticated } = require("../../utils")
+const {
+  uploadManager,
+  chunkVideoUpload,
+  multerConfig,
+} = require("../../utils/multer")
 
+const uploadMiddleware = multerConfig.single("video")
 //controller files
 const {
   createUserController,
