@@ -43,9 +43,8 @@ const updateCourseController = async (req, res, next) => {
 }
 
 const updateCourseModuleController = async (req, res, next) => {
-  let value = await fileModifier(req)
   const [error, data] = await manageAsyncOps(
-    CourseService.updateCourseModule(value, req.params.id)
+    CourseService.updateCourseModule(req, req.params.id)
   )
 
   if (error) return next(error)
@@ -55,9 +54,8 @@ const updateCourseModuleController = async (req, res, next) => {
   return responseHandler(res, SUCCESS, data)
 }
 const updateModuleController = async (req, res, next) => {
-  let value = await fileModifier(req)
   const [error, data] = await manageAsyncOps(
-    CourseService.updateModule(value, req.params.id)
+    CourseService.updateModule(req, req.params.id)
   )
 
   if (error) return next(error)

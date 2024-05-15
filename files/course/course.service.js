@@ -13,6 +13,7 @@ const {
 const {
   NotificationRepository,
 } = require("../notification/notification.repository")
+const { videoChunkUpload } = require("../../utils/multer")
 
 class CourseService {
   static async createCourse(payload, locals) {
@@ -128,7 +129,8 @@ class CourseService {
 
   //update modules
   static async updateCourseModule(payload, moduleId) {
-    const { image, body } = payload
+    const { body } = payload
+    const moduleVideo = await videoChunkUpload("moduleVideo", payload)
 
     const course = await CourseRepository.updateCourseDetails(
       { "modules._id": moduleId },
@@ -141,7 +143,7 @@ class CourseService {
           "modules.$.lessonNoteContent": body.lessonNoteContent,
           "modules.$.assessmentInstruction": body.assessmentInstruction,
           "modules.$.assessment": body.assessment,
-          "modules.$.video": image,
+          "modules.$.video": moduleVideo,
         },
       }
     )
@@ -157,8 +159,8 @@ class CourseService {
 
   //update modules
   static async updateModule(payload, courseId) {
-    const { image, body } = payload
-
+   const { body } = payload
+   const moduleVideo = await videoChunkUpload("moduleVideo", payload)
     const course = await CourseRepository.updateCourseDetails(
       { _id: new mongoose.Types.ObjectId(courseId) },
       {
@@ -170,7 +172,7 @@ class CourseService {
             lessonNoteContent: body.lessonNoteContent,
             assessmentInstruction: body.assessmentInstruction,
             assessment: body.assessment,
-            video: image,
+            video: moduleVideo,
           },
         },
       }
