@@ -10,6 +10,7 @@ const {
   getLoggedInAdminController,
   getAdminController,
   dashboardAnalysisController,
+  instructorDashboardAnalysisController,
 } = require("./admin.controller")
 
 //admin route
@@ -26,5 +27,8 @@ adminRoute
 
 //dashboard analysis
 adminRoute.route("/dashboard").get(dashboardAnalysisController)
+adminRoute
+  .route("/instructor-dashboard")
+  .get(instructorDashboardAnalysisController)
 
 module.exports = adminRoute

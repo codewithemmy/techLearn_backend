@@ -337,6 +337,46 @@ class AdminAuthService {
       },
     }
   }
+
+  static async instructorDashboardAnalysisService(query, locals) {
+    const { from, to } = query
+    let extra = {}
+    if (from && to) {
+      let start = new Date(from)
+      let end = new Date(to)
+      end.setHours(0, 0, 0, 0)
+      extra = {
+        createdAt: {
+          $gte: start,
+          $lte: new Date(end.getTime() + 24 * 60 * 60 * 1000),
+        },
+      }
+    }
+
+    const instructor = await AdminRepository.fetchAdmin({
+      role: "instructor",
+      _id: new mongoose.Types.ObjectId(locals),
+    })
+
+    if (!instructor) return { success: false, msg: `Invalid instructor` }
+    const instructorStudent = await UserRepository.findAllUsersParams({
+      ...extra,
+      courseId: new mongoose.Types.ObjectId(instructor.courseId),
+    })
+    const otherStudent = await UserRepository.findAllUsersParams({
+      ...extra,
+    })
+
+    return {
+      success: true,
+      msg: authMessages.ADMIN_FOUND,
+      data: {
+        myStudent: instructorStudent.length < 1 ? 0 : instructorStudent.length,
+        otherStudent: otherStudent.length < 1 ? 0 : otherStudent.length,
+        student: instructorStudent,
+      },
+    }
+  }
 }
 
 module.exports = { AdminAuthService }
