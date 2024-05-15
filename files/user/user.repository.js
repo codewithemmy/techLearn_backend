@@ -31,6 +31,7 @@ class UserRepository {
       { ...restOfPayload },
       { password: 0, paystackCardDetails: 0 }
     )
+      .populate({ path: "courseId", select: "title" })
       .sort(sort)
       .skip(skip)
       .limit(limit)
