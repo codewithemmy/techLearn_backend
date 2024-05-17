@@ -14,6 +14,7 @@ const {
   NotificationRepository,
 } = require("../notification/notification.repository")
 const { videoChunkUpload } = require("../../utils/multer")
+const { sendMailNotification } = require("../../utils/email")
 
 class CourseService {
   static async createCourse(payload, locals) {
@@ -66,14 +67,6 @@ class CourseService {
 
       extra = { _id: new mongoose.Types.ObjectId(instructorCourse._id) }
     }
-
-    // if (!locals.isAdmin) {
-    //   const user = await UserRepository.findSingleUserWithParams({
-    //     _id: new mongoose.Types.ObjectId(locals._id),
-    //   })
-
-    //   extra = { _id: new mongoose.Types.ObjectId(user.courseId) }
-    // }
 
     const course = await CourseRepository.findAllCourseParams({
       ...params,
@@ -348,10 +341,13 @@ class CourseService {
   }
   //admin sending virtual class link
   static async virtualClassLink(payload, locals) {
-    const { courseLink } = payload
+    const { virtualLink, email } = payload
 
-    if (!courseLink)
-      return { status: false, msg: `Course link cannot be empty` }
+    if (!virtualLink || !email)
+      return {
+        status: false,
+        msg: `Course link or student email cannot be empty`,
+      }
 
     const user = await UserRepository.findSingleUserWithParams({
       email: payload.email,
@@ -373,7 +369,7 @@ class CourseService {
         msg: `student is not a premium user`,
       }
 
-    const [userCourse, instructorCourse] = Promise.all([
+    const [userCourse, instructorCourse] = await Promise.all([
       await CourseRepository.fetchOne({
         _id: new mongoose.Types.ObjectId(user.courseId),
       }),
@@ -387,9 +383,16 @@ class CourseService {
     if (!instructorCourse)
       return { success: false, msg: `Invalid instructor course` }
 
+    if (instructorCourse._id !== userCourse._id)
+      return {
+        success: false,
+        msg: `Student not enrolled to instructor's course`,
+      }
+
     const substitutional_parameters = {
-      name: user.firstName,
+      name: user.username,
       email: user.email,
+      link: virtualLink,
     }
 
     try {
@@ -397,7 +400,7 @@ class CourseService {
         recipientId: new mongoose.Types.ObjectId(user._id),
         recipient: "User",
         title: "Virtual Class Link",
-        message: `Hello ${user.firstName}. This is the link: ${courseLink} to your virtual class. Kindly join`,
+        message: `Hello ${user.username}. This is the link: ${virtualLink} to your virtual class. Kindly join`,
       })
 
       await sendMailNotification(
