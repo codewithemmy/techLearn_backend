@@ -159,8 +159,8 @@ class CourseService {
 
   //update modules
   static async updateModule(payload, courseId) {
-   const { body } = payload
-   const moduleVideo = await videoChunkUpload("moduleVideo", payload)
+    const { body } = payload
+    const moduleVideo = await videoChunkUpload("moduleVideo", payload)
     const course = await CourseRepository.updateCourseDetails(
       { _id: new mongoose.Types.ObjectId(courseId) },
       {
@@ -322,7 +322,7 @@ class CourseService {
     if (!course)
       return {
         success: false,
-        msg: `User currently has not active course`,
+        msg: `User currently has no active course`,
       }
 
     //get course instructor
@@ -338,13 +338,79 @@ class CourseService {
         recipientId: new mongoose.Types.ObjectId(instructor._id),
         recipient: "Admin",
         title: "Course Code Request",
-        message: `Hello ${instructor.firstName} - Your student: ${user.firstName} is requesting to join your class. Kindly revert `,
+        message: `Hello ${instructor.firstName} - Your student: ${user.firstName} with email: ${user.email} is requesting to join your class. Kindly revert `,
       })
     } catch (error) {
       console.log("notification error", error)
     }
 
-    return { success: true, msg: `Virtual class request successful sent` }
+    return { success: true, msg: `Virtual class request sent successfully` }
+  }
+  //admin sending virtual class link
+  static async virtualClassLink(payload, locals) {
+    const { courseLink } = payload
+
+    if (!courseLink)
+      return { status: false, msg: `Course link cannot be empty` }
+
+    const user = await UserRepository.findSingleUserWithParams({
+      email: payload.email,
+    })
+
+    if (!user) return { success: false, msg: `Invalid student email` }
+
+    //get course instructor
+    const instructor = await AdminRepository.fetchAdmin({
+      _id: new mongoose.Types.ObjectId(locals),
+      role: "instructor",
+    })
+
+    if (!instructor) return { success: false, msg: `Invalid admin/instructor` }
+    //check user type
+    if (user.userType !== "premium")
+      return {
+        success: false,
+        msg: `student is not a premium user`,
+      }
+
+    const [userCourse, instructorCourse] = Promise.all([
+      await CourseRepository.fetchOne({
+        _id: new mongoose.Types.ObjectId(user.courseId),
+      }),
+      await CourseRepository.fetchOne({
+        _id: new mongoose.Types.ObjectId(instructor.courseId),
+      }),
+    ])
+
+    if (!userCourse)
+      return { success: false, msg: `Invalid course for student` }
+    if (!instructorCourse)
+      return { success: false, msg: `Invalid instructor course` }
+
+    const substitutional_parameters = {
+      name: user.firstName,
+      email: user.email,
+    }
+
+    try {
+      await NotificationRepository.createNotification({
+        recipientId: new mongoose.Types.ObjectId(user._id),
+        recipient: "User",
+        title: "Virtual Class Link",
+        message: `Hello ${user.firstName}. This is the link: ${courseLink} to your virtual class. Kindly join`,
+      })
+
+      await sendMailNotification(
+        user.email,
+        "Virtual Class Link",
+        substitutional_parameters,
+        "VIRTUAL_LINK"
+      )
+    } catch (error) {
+      console.log("notification error", error)
+    }
+
+    return { success: true, msg: `Virtual class link sent successfully` }
   }
 
   //module assessment or test

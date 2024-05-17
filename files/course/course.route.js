@@ -14,6 +14,7 @@ const {
   userEnrolledCourseController,
   getSingleModuleController,
   virtualClassRequestController,
+  virtualClassLinkController,
 } = require("./course.controller")
 
 const uploadMiddleware = multerConfig.single("video")
@@ -61,5 +62,8 @@ courseRoute.route("/module-assessment").post(moduleAssessmentController)
 
 //virtual class request
 courseRoute.route("/virtual-class-request").get(virtualClassRequestController)
+
+//virtual class link
+courseRoute.route("/virtual-class-link").post(virtualClassLinkController)
 
 module.exports = courseRoute

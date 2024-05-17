@@ -166,7 +166,7 @@ class PaystackPaymentService {
         recipientId: new mongoose.Types.ObjectId(transaction.userId),
         recipient: "User",
         title: "Subscription Plan Successful",
-        message: `You have successfully subscribed for plan- ${subscriptionPlan.title}. You can now enroll for a course. Enjoy your learning journey.`,
+        message: `You have successfully subscribed for plan- ${subscriptionPlan.planType}. You can now enroll for a course. Enjoy your learning journey.`,
       })
     } catch (error) {
       console.log("notification error", error)
