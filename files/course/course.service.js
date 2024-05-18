@@ -123,8 +123,10 @@ class CourseService {
   //update modules
   static async updateCourseModule(payload, moduleId) {
     const { body } = payload
-    const moduleVideo = await videoChunkUpload("moduleVideo", payload)
-
+     let moduleVideo
+     if (payload && payload.file) {
+       moduleVideo = await videoChunkUpload("moduleVideo", payload)
+     }
     const course = await CourseRepository.updateCourseDetails(
       { "modules._id": moduleId },
       {
@@ -153,7 +155,10 @@ class CourseService {
   //update modules
   static async updateModule(payload, courseId) {
     const { body } = payload
-    const moduleVideo = await videoChunkUpload("moduleVideo", payload)
+    let moduleVideo
+    if (payload && payload.file) {
+      moduleVideo = await videoChunkUpload("moduleVideo", payload)
+    }
     const course = await CourseRepository.updateCourseDetails(
       { _id: new mongoose.Types.ObjectId(courseId) },
       {
