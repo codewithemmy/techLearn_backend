@@ -31,7 +31,7 @@ class CourseService {
     try {
       await NotificationRepository.createNotification({
         recipientId: new mongoose.Types.ObjectId(locals._id),
-        recipient: "Admin",
+        recipient: "Super-Admin",
         title: "Course Created",
         message: `You have successfully created a course - ${body.title}`,
       })

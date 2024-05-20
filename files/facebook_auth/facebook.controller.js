@@ -9,8 +9,7 @@ const facebookSuccessController = async (req, res, next) => {
   const [error, data] = await manageAsyncOps(
     FacebookAuthService.facebookSuccessService(req.user)
   )
-  console.log("request", req)
-  console.log("error", error)
+
   if (error) return next(error)
 
   if (!data.success) return next(new CustomError(data.msg, BAD_REQUEST, data))
@@ -22,8 +21,7 @@ const facebookFailureController = async (req, res, next) => {
   const [error, data] = await manageAsyncOps(
     FacebookAuthService.facebookFailureService()
   )
-  console.log("request", req)
-  console.log("error", error)
+
   if (error) return next(error)
 
   if (!data.success) return next(new CustomError(data.msg, BAD_REQUEST, data))

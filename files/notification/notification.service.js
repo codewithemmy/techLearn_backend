@@ -25,7 +25,7 @@ class NotificationService {
         sort,
       })
 
-    if (notification.length < 1)
+    if (notifications.length < 1)
       return {
         success: true,
         msg: notificationMessages.NOTIFICATION_NOT_FOUND,

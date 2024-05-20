@@ -5,7 +5,6 @@ const { uploadManager } = require("../../utils/multer")
 const {
   adminSignUpController,
   adminLogin,
-
   updateAdminController,
   getLoggedInAdminController,
   getAdminController,

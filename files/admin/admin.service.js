@@ -14,6 +14,9 @@ const {
   TransactionRepository,
 } = require("../transaction/transaction.repository")
 const { CourseRepository } = require("../../files/course/course.repository")
+const {
+  NotificationRepository,
+} = require("../notification/notification.repository")
 
 class AdminAuthService {
   static async adminSignUpService(body) {
@@ -42,6 +45,14 @@ class AdminAuthService {
       return { success: false, msg: authMessages.ADMIN_NOT_CREATED }
 
     try {
+      await NotificationRepository.createNotification({
+        recipientId: new mongoose.Types.ObjectId(signUp._id),
+        recipient: "Admin",
+        title: "Instructor Account",
+        message: `Congratulations, you a now a certified instructor for a course on
+          TechLearn`,
+      })
+
       const substitutional_parameters = {
         name: body.firstName,
         email: body.email,

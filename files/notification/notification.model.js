@@ -12,7 +12,7 @@ const NotificationSchema = new mongoose.Schema(
     },
     recipient: {
       type: String,
-      enum: ["User", "Admin"],
+      enum: ["User", "Admin", "Super-Admin"],
     },
     title: {
       type: String,

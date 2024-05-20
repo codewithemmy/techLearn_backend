@@ -162,16 +162,19 @@ class PaystackPaymentService {
 
     try {
       await NotificationRepository.createNotification({
-        userId: new mongoose.Types.ObjectId(transaction.userId),
         recipientId: new mongoose.Types.ObjectId(transaction.userId),
         recipient: "User",
         title: "Subscription Plan Successful",
         message: `You have successfully subscribed for plan- ${subscriptionPlan.planType}. You can now enroll for a course. Enjoy your learning journey.`,
       })
+      await NotificationRepository.createNotification({
+        recipient: "Super-Admin",
+        title: "Subscription Plan",
+        message: `Hi, A user just subscribed for plan- ${subscriptionPlan.planType}`,
+      })
     } catch (error) {
       console.log("notification error", error)
     }
-
     return { success: true, msg: TransactionMessages.PAYMENT_SUCCESS }
   }
 
