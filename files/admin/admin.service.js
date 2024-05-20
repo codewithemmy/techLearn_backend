@@ -384,7 +384,7 @@ class AdminAuthService {
     }
   }
 
-  static async coursesAndUsers(payload) {
+  static async coursesAndUsers() {
     const courses = await CourseRepository.findCourseWithoutParams({})
 
     if (courses.length < 1)

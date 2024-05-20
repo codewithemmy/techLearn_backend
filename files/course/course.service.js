@@ -131,7 +131,11 @@ class CourseService {
       { isDelete: true }
     )
 
-    if (!course) return { success: false, msg: `Unable to delete course or likely courseId` }
+    if (!course)
+      return {
+        success: false,
+        msg: `Unable to delete course or likely courseId`,
+      }
 
     return { success: true, msg: `Course deleted successfully` }
   }
@@ -517,6 +521,21 @@ class CourseService {
       success: true,
       msg: CourseSuccess.UPDATE,
       data: { result, grade: assessmentRecord.grade },
+    }
+  }
+
+  //get only course modules
+  static async fetchOnlyCourseModules(params) {
+    const course = await CourseRepository.fetchOne({
+      _id: new mongoose.Types.ObjectId(params),
+    })
+
+    if (!course) return { success: true, msg: `Invalid courseId` }
+
+    return {
+      success: true,
+      msg: `Course fetch successfully`,
+      data: course.modules,
     }
   }
 }

@@ -16,6 +16,7 @@ const {
   virtualClassRequestController,
   virtualClassLinkController,
   softDeleteCourseController,
+  fetchOnlyCourseModulesController,
 } = require("./course.controller")
 
 const uploadMiddleware = multerConfig.single("video")
@@ -47,7 +48,11 @@ courseRoute.route("/module/assessment/:id").patch(updateAssessmentController)
 
 courseRoute.route("/module/:courseId/:moduleId").get(getSingleModuleController)
 
+//get course
 courseRoute.route("/").get(getCourseController)
+
+//get only modules
+courseRoute.route("/course-modules/:id").get(fetchOnlyCourseModulesController)
 
 //student enrollment
 courseRoute.route("/enroll/:id").post(studentEnrollmentController)
