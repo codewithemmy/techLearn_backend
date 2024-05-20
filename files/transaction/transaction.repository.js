@@ -15,6 +15,10 @@ class TransactionRepository {
       ...restOfPayload,
     })
       .populate("subscriptionPlanId")
+      .populate({
+        path: "userId",
+        select: "fullNam username email profileImage",
+      })
       .sort(sort)
       .skip(skip)
       .limit(limit)

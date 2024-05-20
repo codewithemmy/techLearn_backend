@@ -4,6 +4,7 @@ const supportSchema = new mongoose.Schema(
   {
     title: { type: String },
     email: { type: String },
+    ticketId: { type: String },
     status: {
       type: String,
       default: "new",

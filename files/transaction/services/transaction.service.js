@@ -98,9 +98,14 @@ class TransactionService {
     )
     if (error) return { success: false, msg: error }
 
+    let extra = {}
+    if (!locals.isAdmin) {
+      extra = { userId: new mongoose.Types.ObjectId(locals._id) }
+    }
+
     const transaction = await TransactionRepository.fetchTransactionsByParams({
       ...params,
-      userId: new mongoose.Types.ObjectId(locals),
+      ...extra,
       limit,
       skip,
       sort,

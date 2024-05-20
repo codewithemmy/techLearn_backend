@@ -20,9 +20,8 @@ const paymentTransactionController = async (req, res, next) => {
 
 const getTransactionController = async (req, res, next) => {
   const [error, data] = await manageAsyncOps(
-    TransactionService.getTransactionService(req.query, res.locals.jwt._id)
+    TransactionService.getTransactionService(req.query, res.locals.jwt)
   )
-
   if (error) return next(error)
 
   if (!data.success) return next(new CustomError(data.msg, BAD_REQUEST, data))

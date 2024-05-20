@@ -1,12 +1,26 @@
-const { queryConstructor } = require("../../utils")
+const { queryConstructor, AlphaNumeric } = require("../../utils")
 const { SupportFailure, SupportSuccess } = require("./support.messages")
 const { SupportRepository } = require("./support.repository")
 const mongoose = require("mongoose")
 
 class SupportService {
   static async createSupport(payload, locals) {
+    let ticketId = `Ticket# ${AlphaNumeric(4, "number")}-${AlphaNumeric(
+      4,
+      "alpha"
+    )}`
+
+    const confirmTicket = await SupportRepository.fetchOne({ ticketId })
+
+    if (confirmTicket) {
+      ticketId = `Ticket# ${AlphaNumeric(4, "number")}-${AlphaNumeric(
+        4,
+        "alpha"
+      )}`
+    }
     const support = await SupportRepository.create({
       ...payload,
+      ticketId,
       userId: new mongoose.Types.ObjectId(locals._id),
     })
 
