@@ -318,6 +318,10 @@ class AdminAuthService {
     let premiumPercent = (premiumPlan.length / revenue.length) * 100
     let standardPercent = (standardPlan.length / revenue.length) * 100
 
+    const latestOrder = await UserRepository.findAllUsersParams({
+      enrollmentStatus: "active",
+    })
+
     return {
       success: true,
       msg: authMessages.ADMIN_FOUND,
@@ -335,6 +339,7 @@ class AdminAuthService {
         standard: standardPercent.toFixed(2),
         premium: premiumPercent.toFixed(2),
       },
+      latestOrder,
     }
   }
 
