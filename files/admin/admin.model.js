@@ -10,14 +10,14 @@ const adminSchema = new mongoose.Schema(
       type: String,
     },
     email: {
-    type: String,
-    unique: true,
-    required: [true, 'Please provide email'],
-    validate: {
-      validator: validator.isEmail,
-      message: 'Please provide valid email',
+      type: String,
+      unique: true,
+      required: [true, "Please provide email"],
+      validate: {
+        validator: validator.isEmail,
+        message: "Please provide valid email",
+      },
     },
-  },
     username: {
       type: String,
     },
@@ -47,6 +47,12 @@ const adminSchema = new mongoose.Schema(
       default: "admin",
     },
     status: {
+      type: String,
+    },
+    state: {
+      type: String,
+    },
+    country: {
       type: String,
     },
     postalCode: {
