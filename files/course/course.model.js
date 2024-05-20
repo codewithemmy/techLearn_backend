@@ -21,6 +21,10 @@ const courseSchema = new mongoose.Schema(
       type: String,
     },
     overview: { type: String },
+    approved: {
+      type: Boolean,
+      default: false,
+    },
     modules: [
       {
         module: { type: String },
