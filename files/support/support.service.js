@@ -32,13 +32,18 @@ class SupportService {
     }
   }
 
-  static async fetchSupport(payload) {
+  static async fetchSupport(payload, locals) {
     const { error, params, limit, skip, sort } = queryConstructor(
       payload,
       "createdAt",
       "Support"
     )
     if (error) return { success: false, msg: error }
+
+    let extra = {}
+    if (!locals.isAdmin) {
+      extra = { userId: new mongoose.Types.ObjectId(locals._id) }
+    }
 
     const support = await SupportRepository.findAllSupportParams({
       ...params,

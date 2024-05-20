@@ -16,9 +16,8 @@ const createSupportController = async (req, res, next) => {
 
 const fetchSupportController = async (req, res, next) => {
   const [error, data] = await manageAsyncOps(
-    SupportService.fetchSupport(req.query)
+    SupportService.fetchSupport(req.query, res.locals.jwt)
   )
-  console.log("error", error)
   if (error) return next(error)
   if (!data.success) return next(new CustomError(data.msg, BAD_REQUEST, data))
 
