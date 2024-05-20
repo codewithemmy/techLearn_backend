@@ -87,6 +87,15 @@ const instructorDashboardAnalysisController = async (req, res, next) => {
   return responseHandler(res, 200, data)
 }
 
+const coursesAndUsersController = async (req, res, next) => {
+  const [error, data] = await manageAsyncOps(AdminAuthService.coursesAndUsers())
+  console.log("error", error)
+  if (error) return next(error)
+  if (!data.success) return next(new CustomError(data.msg, 400, data))
+
+  return responseHandler(res, 200, data)
+}
+
 module.exports = {
   adminSignUpController,
   adminLogin,
@@ -95,4 +104,5 @@ module.exports = {
   getLoggedInAdminController,
   dashboardAnalysisController,
   instructorDashboardAnalysisController,
+  coursesAndUsersController,
 }

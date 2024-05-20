@@ -6,8 +6,8 @@ class CourseRepository {
     return Course.create(payload)
   }
 
-  static async findCourseWithParams(payload, select) {
-    return Course.find({ ...payload }).select(select)
+  static async findCourseWithoutParams(payload, select) {
+    return Course.find({ ...payload }, { title: 1, overview: 1 }).select(select)
   }
   static async fetchOne(payload, select) {
     return Course.findOne({ ...payload }).select(select)

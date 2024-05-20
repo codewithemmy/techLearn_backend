@@ -384,25 +384,33 @@ class AdminAuthService {
     }
   }
 
-  static async coursesAndUsers(payload, locals) {
-    const { error, params, limit, skip, sort } = queryConstructor(
-      payload,
-      "createdAt",
-      "Course"
-    )
-    if (error) return { success: false, msg: error }
+  static async coursesAndUsers(payload) {
+    const courses = await CourseRepository.findCourseWithoutParams({})
 
-    const course = await CourseRepository.findAllCourseParams({
-      ...params,
-    })
+    if (courses.length < 1)
+      return { success: true, msg: `No course currently available`, data: [] }
 
-    if (course.length < 1)
-      return { success: true, msg: CourseFailure.FETCH, data: [] }
+    // Initialize an array to hold course enrollment counts
+    const courseEnrollmentCounts = []
+
+    for (const course of courses) {
+      const enrolledUsersCount = await UserRepository.countUser({
+        courseId: new mongoose.Types.ObjectId(course._id),
+      })
+      // Add the course and its enrollment count to the array
+
+      courseEnrollmentCounts.push({
+        _id: course._id,
+        overview: course.overview,
+        title: course.title,
+        userCount: enrolledUsersCount,
+      })
+    }
 
     return {
       success: true,
-      msg: CourseSuccess.FETCH,
-      data: course,
+      msg: `Course fetch successfully`,
+      data: courseEnrollmentCounts,
     }
   }
 }
