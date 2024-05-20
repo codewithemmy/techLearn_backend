@@ -37,7 +37,7 @@ class ReportService {
       sort,
     })
 
-    if (!report) return { success: false, msg: ReportFailure.FETCH }
+    if (report.length < 1) return { success: false, msg: ReportFailure.FETCH }
 
     return {
       success: true,
@@ -62,7 +62,7 @@ class ReportService {
       sort,
     })
 
-    if (!report) return { success: false, msg: ReportFailure.FETCH }
+    if (report.length < 1) return { success: false, msg: ReportFailure.FETCH }
     const countReport = await ReportRepository.countAllReportParams()
 
     return {

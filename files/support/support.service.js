@@ -47,7 +47,8 @@ class SupportService {
       sort,
     })
 
-    if (!support) return { success: true, msg: SupportFailure.FETCH, data: [] }
+    if (support.length < 1)
+      return { success: true, msg: SupportFailure.FETCH, data: [] }
 
     return {
       success: true,

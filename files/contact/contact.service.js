@@ -32,7 +32,8 @@ class ContactService {
       sort,
     })
 
-    if (!contact) return { success: true, msg: ContactFailure.FETCH, data: [] }
+    if (contact.length < 1)
+      return { success: true, msg: ContactFailure.FETCH, data: [] }
 
     return {
       success: true,

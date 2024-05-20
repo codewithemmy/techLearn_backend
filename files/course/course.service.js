@@ -76,7 +76,8 @@ class CourseService {
       sort,
     })
 
-    if (!course) return { success: true, msg: CourseFailure.FETCH, data: [] }
+    if (course.length < 1)
+      return { success: true, msg: CourseFailure.FETCH, data: [] }
 
     return {
       success: true,
@@ -123,10 +124,10 @@ class CourseService {
   //update modules
   static async updateCourseModule(payload, moduleId) {
     const { body } = payload
-     let moduleVideo
-     if (payload && payload.file) {
-       moduleVideo = await videoChunkUpload("moduleVideo", payload)
-     }
+    let moduleVideo
+    if (payload && payload.file) {
+      moduleVideo = await videoChunkUpload("moduleVideo", payload)
+    }
     const course = await CourseRepository.updateCourseDetails(
       { "modules._id": moduleId },
       {

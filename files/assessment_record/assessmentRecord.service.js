@@ -37,7 +37,7 @@ class AssessmentRecordService {
         sort,
       })
 
-    if (!assessment)
+    if (assessment.length < 1)
       return { success: true, msg: AssessmentRecordFailure.FETCH, data: [] }
 
     return {

@@ -13,6 +13,7 @@ const { sendMailNotification } = require("../../utils/email")
 const {
   TransactionRepository,
 } = require("../transaction/transaction.repository")
+const { CourseRepository } = require("../../files/course/course.repository")
 
 class AdminAuthService {
   static async adminSignUpService(body) {
@@ -380,6 +381,28 @@ class AdminAuthService {
         otherStudent: otherStudent.length < 1 ? 0 : otherStudent.length,
         student: instructorStudent,
       },
+    }
+  }
+
+  static async coursesAndUsers(payload, locals) {
+    const { error, params, limit, skip, sort } = queryConstructor(
+      payload,
+      "createdAt",
+      "Course"
+    )
+    if (error) return { success: false, msg: error }
+
+    const course = await CourseRepository.findAllCourseParams({
+      ...params,
+    })
+
+    if (course.length < 1)
+      return { success: true, msg: CourseFailure.FETCH, data: [] }
+
+    return {
+      success: true,
+      msg: CourseSuccess.FETCH,
+      data: course,
     }
   }
 }

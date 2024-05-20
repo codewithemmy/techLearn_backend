@@ -32,7 +32,7 @@ class ReviewService {
       sort,
     })
 
-    if (!reviews) return { success: false, msg: ReviewFailure.FETCH }
+    if (reviews.length < 1) return { success: false, msg: ReviewFailure.FETCH }
 
     const totalReviews = reviews.length
     const totalRating = reviews.reduce((sum, review) => sum + review.rating, 0)
@@ -61,7 +61,8 @@ class ReviewService {
       sort,
     })
 
-    if (!reviews) return { success: true, msg: ReviewFailure.FETCH, data: [] }
+    if (reviews.length < 1)
+      return { success: true, msg: ReviewFailure.FETCH, data: [] }
 
     return {
       success: true,
