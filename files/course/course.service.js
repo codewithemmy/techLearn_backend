@@ -71,6 +71,7 @@ class CourseService {
     const course = await CourseRepository.findAllCourseParams({
       ...params,
       ...extra,
+      isDeleted: false,
       limit,
       skip,
       sort,
