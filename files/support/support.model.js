@@ -8,7 +8,7 @@ const supportSchema = new mongoose.Schema(
     status: {
       type: String,
       default: "new",
-      enum: ["new", "on-going", "resolved"],
+      enum: ["new", "resolved"],
     },
     message: {
       type: String,

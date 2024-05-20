@@ -75,9 +75,6 @@ class SupportService {
 
     if (!confirmSupport) return { success: false, msg: SupportFailure.FETCH }
 
-    // if (confirmSupport.status === "resolved")
-    //   return { success: false, msg: SupportFailure.RESOLVED }
-
     const support = await SupportRepository.updateSupportDetails(
       { _id: new mongoose.Types.ObjectId(supportId) },
       {
