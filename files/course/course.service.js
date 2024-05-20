@@ -48,7 +48,7 @@ class CourseService {
       "Course"
     )
     if (error) return { success: false, msg: error }
-
+    console.log("payload", locals)
     let extra = {}
     if (locals.role === "instructor") {
       const admin = await AdminRepository.fetchAdmin({
@@ -67,7 +67,7 @@ class CourseService {
 
       extra = { _id: new mongoose.Types.ObjectId(instructorCourse._id) }
     }
-
+    console.log("locals", extra)
     const course = await CourseRepository.findAllCourseParams({
       ...params,
       ...extra,
@@ -183,7 +183,7 @@ class CourseService {
         msg: `Unable to update or possibly  wrong  module id`,
       }
 
-    return { success: true, msg: `Module updated successfully` }
+    return { success: true, msg: `Module updated successfully`, data: course }
   }
 
   //update modules assessment
