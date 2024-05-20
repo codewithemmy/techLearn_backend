@@ -57,7 +57,6 @@ const updateModuleController = async (req, res, next) => {
   const [error, data] = await manageAsyncOps(
     CourseService.updateModule(req, req.params.id)
   )
-console.log("error", error)
   if (error) return next(error)
 
   if (!data.success) return next(new CustomError(data.msg, BAD_REQUEST, data))
@@ -162,6 +161,17 @@ const virtualClassLinkController = async (req, res, next) => {
   return responseHandler(res, SUCCESS, data)
 }
 
+const softDeleteCourseController = async (req, res, next) => {
+  const [error, data] = await manageAsyncOps(
+    CourseService.softDeleteCourse(req.params.id)
+  )
+  console.log("error", error)
+  if (error) return next(error)
+
+  if (!data.success) return next(new CustomError(data.msg, BAD_REQUEST, data))
+
+  return responseHandler(res, SUCCESS, data)
+}
 module.exports = {
   createCourseController,
   getCourseController,
@@ -176,4 +186,5 @@ module.exports = {
   userEnrolledCourseController,
   virtualClassRequestController,
   virtualClassLinkController,
+  softDeleteCourseController,
 }

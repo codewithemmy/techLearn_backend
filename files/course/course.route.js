@@ -15,6 +15,7 @@ const {
   getSingleModuleController,
   virtualClassRequestController,
   virtualClassLinkController,
+  softDeleteCourseController,
 } = require("./course.controller")
 
 const uploadMiddleware = multerConfig.single("video")
@@ -65,5 +66,8 @@ courseRoute.route("/virtual-class-request").get(virtualClassRequestController)
 
 //virtual class link
 courseRoute.route("/virtual-class-link").post(virtualClassLinkController)
+
+//soft delete course
+courseRoute.route("/:id").delete(softDeleteCourseController)
 
 module.exports = courseRoute

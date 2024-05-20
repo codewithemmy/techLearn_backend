@@ -48,8 +48,11 @@ class CourseService {
       "Course"
     )
     if (error) return { success: false, msg: error }
-    console.log("payload", locals)
+
     let extra = {}
+    if (!locals.isAdmin) {
+      extra = { approved: true }
+    }
     if (locals.role === "instructor") {
       const admin = await AdminRepository.fetchAdmin({
         _id: new mongoose.Types.ObjectId(locals._id),
@@ -67,7 +70,7 @@ class CourseService {
 
       extra = { _id: new mongoose.Types.ObjectId(instructorCourse._id) }
     }
-    console.log("locals", extra)
+
     const course = await CourseRepository.findAllCourseParams({
       ...params,
       ...extra,
@@ -120,6 +123,17 @@ class CourseService {
     if (!course) return { success: false, msg: CourseFailure.UPDATE }
 
     return { success: true, msg: CourseSuccess.UPDATE, data: course }
+  }
+
+  static async softDeleteCourse(courseParams) {
+    const course = await CourseRepository.updateCourseDetails(
+      { _id: new mongoose.Types.ObjectId(courseParams) },
+      { isDelete: true }
+    )
+
+    if (!course) return { success: false, msg: `Unable to delete course or likely courseId` }
+
+    return { success: true, msg: `Course deleted successfully` }
   }
 
   //update modules
