@@ -161,6 +161,12 @@ class CourseService {
     if (payload && payload.file) {
       moduleVideo = await videoChunkUpload("moduleVideo", payload)
     }
+
+    if (!body.moduleNumber || !body.lessonNoteContent)
+      return {
+        success: false,
+        msg: `moduleNumber, lessonNoteContent or lessonNoteContent cannot be empty`,
+      }
     const course = await CourseRepository.updateCourseDetails(
       { _id: new mongoose.Types.ObjectId(courseId) },
       {
