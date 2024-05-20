@@ -21,6 +21,10 @@ class SupportRepository {
     const { limit, skip, sort, ...restOfPayload } = payload
 
     const support = await Support.find({ ...restOfPayload })
+      .populate({
+        path: "userId",
+        select: "username firstName lastName profileImage email",
+      })
       .sort(sort)
       .skip(skip)
       .limit(limit)
