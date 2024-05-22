@@ -162,7 +162,6 @@ const verifyToken = async (token) => {
 
 const isAuthenticated = async (req, res, next) => {
   try {
-    console.log("req.headers", req.headers)
     let authToken = req.headers.authorization
 
     if (authToken) {

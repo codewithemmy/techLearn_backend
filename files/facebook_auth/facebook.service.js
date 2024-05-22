@@ -5,7 +5,6 @@ const { UserRepository } = require("../user/user.repository")
 
 class FacebookAuthService {
   static async facebookSuccessService(payload) {
-    console.log("payload", payload)
     const { email, _json } = payload
 
     const userExist = await UserRepository.validateUser({

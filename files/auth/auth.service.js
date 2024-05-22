@@ -39,7 +39,6 @@ class AuthService {
 
   static async forgotPassword(payload) {
     const { email, phoneNumber } = payload
-    console.log("email", email)
     const user = await UserRepository.findSingleUserWithParams({ email })
 
     if (!user) return { success: false, msg: AuthFailure.FETCH }
