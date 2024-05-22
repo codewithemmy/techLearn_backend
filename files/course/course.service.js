@@ -180,11 +180,11 @@ class CourseService {
       moduleVideo = await videoChunkUpload("moduleVideo", payload)
     }
 
-    // if (!body.moduleNumber || !body.lessonNoteContent)
-    //   return {
-    //     success: false,
-    //     msg: `moduleNumber, lessonNoteContent or lessonNoteContent cannot be empty`,
-    //   }
+    if (!body.moduleNumber || !body.lessonNoteContent)
+      return {
+        success: false,
+        msg: `moduleNumber, lessonNoteContent or lessonNoteContent cannot be empty`,
+      }
     const course = await CourseRepository.updateCourseDetails(
       { _id: new mongoose.Types.ObjectId(courseId) },
       {
@@ -207,7 +207,12 @@ class CourseService {
         msg: `Unable to update or possibly  wrong  module id`,
       }
 
-    return { success: true, msg: `Module updated successfully`, data: course }
+    return {
+      success: true,
+      msg: `Module updated successfully`,
+      moduleId: course.modules.slice(-1)[0]._id,
+      data: course,
+    }
   }
 
   //update modules assessment
