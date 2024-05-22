@@ -7,7 +7,7 @@ class SubscriptionRepository {
   }
 
   static async fetchOne(payload) {
-    return Subscription.findOne({ ...payload })
+    return Subscription.findOne({ ...payload }).populate("subscriptionPanId")
   }
 
   static async fetchWithParams(payload, select) {

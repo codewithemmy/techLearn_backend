@@ -13,6 +13,9 @@ const { AuthSuccess } = require("../../auth/auth.messages")
 const {
   NotificationRepository,
 } = require("../../notification/notification.repository")
+const {
+  SubscriptionRepository,
+} = require("../../subscription/subscription.repository")
 
 class UserService {
   static async createUser(payload) {
@@ -73,14 +76,57 @@ class UserService {
 
   static async userLogin(payload) {
     const { email, password } = payload
-
-    const user = await UserRepository.findSingleUserWithParams({
+    let user
+    user = await UserRepository.findSingleUserWithParams({
       email,
     })
 
     if (!user) return { success: false, msg: UserFailure.VALID_USER }
 
     if (!user.isVerified) return { success: false, msg: UserFailure.VERIFIED }
+
+    // Get current date
+    const currentDate = new Date()
+    //check subscription validation
+    const subscription = await SubscriptionRepository.fetchOne({
+      status: "active",
+      userId: new mongoose.Types.ObjectId(user._id),
+      expired: false,
+    })
+    console.log(subscription)
+    if (!subscription) {
+      user = await UserRepository.updateUserDetails(
+        {
+          _id: new mongoose.Types.ObjectId(user._id),
+        },
+        { userType: "free" }
+      )
+    }
+
+    if (subscription && subscription.expiresAt < currentDate) {
+      user = await UserRepository.updateUserDetails(
+        {
+          _id: new mongoose.Types.ObjectId(user._id),
+        },
+        { userType: "free" }
+      )
+
+      subscription.status = "inactive"
+      subscription.isConfirmed = false
+      subscription.expired = true
+
+      await subscription.save()
+
+      await sendMailNotification(
+        email,
+        "Subscription Expired",
+        {
+          username: user.username,
+          planType: subscription.subscriptionPanId.planType,
+        },
+        "EXPIRY"
+      )
+    }
 
     const isPassword = await verifyPassword(password, user.password)
 
