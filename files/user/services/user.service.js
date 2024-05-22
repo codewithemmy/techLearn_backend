@@ -85,15 +85,13 @@ class UserService {
 
     if (!user.isVerified) return { success: false, msg: UserFailure.VERIFIED }
 
-    // Get current date
-    const currentDate = new Date()
     //check subscription validation
     const subscription = await SubscriptionRepository.fetchOne({
       status: "active",
       userId: new mongoose.Types.ObjectId(user._id),
       expired: false,
     })
-    console.log(subscription)
+
     if (!subscription) {
       user = await UserRepository.updateUserDetails(
         {
@@ -102,6 +100,8 @@ class UserService {
         { userType: "free" }
       )
     }
+    // Get current date
+    const currentDate = new Date()
 
     if (subscription && subscription.expiresAt < currentDate) {
       user = await UserRepository.updateUserDetails(
