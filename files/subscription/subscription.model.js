@@ -25,6 +25,10 @@ const subscriptionSchema = new mongoose.Schema(
       enum: ["active", "in-progress", "inactive"],
       default: "in-progress",
     },
+    expired: {
+      type: Boolean,
+      default: false,
+    },
     expiresAt: {
       type: Date,
     },

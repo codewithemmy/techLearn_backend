@@ -165,7 +165,14 @@ class PaystackPaymentService {
         recipientId: new mongoose.Types.ObjectId(transaction.userId),
         recipient: "User",
         title: "Subscription Plan Successful",
-        message: `You have successfully subscribed for plan- ${subscriptionPlan.planType}. You can now enroll for a course. Enjoy your learning journey.`,
+        message: `You have successfully subscribed for plan- ${
+          subscriptionPlan.planType
+        }. Your subscription expires on ${futureDate
+          .toLocaleString()
+          .slice(
+            0,
+            10
+          )} and you can renew your subscription. You can now enroll for a course. Enjoy your learning journey.`,
       })
       await NotificationRepository.createNotification({
         recipient: "Super-Admin",
