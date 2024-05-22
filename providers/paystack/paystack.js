@@ -159,26 +159,31 @@ class PaystackPaymentService {
         "paystackCardDetails.accountName": authorization.account_name,
       }
     )
-
+    const expiryDate = futureDate.toLocaleString().slice(0, 10)
     try {
-      await NotificationRepository.createNotification({
-        recipientId: new mongoose.Types.ObjectId(transaction.userId),
-        recipient: "User",
-        title: "Subscription Plan Successful",
-        message: `You have successfully subscribed for plan- ${
-          subscriptionPlan.planType
-        }. Your subscription expires on ${futureDate
-          .toLocaleString()
-          .slice(
-            0,
-            10
-          )} and you can renew your subscription. You can now enroll for a course. Enjoy your learning journey.`,
-      })
-      await NotificationRepository.createNotification({
-        recipient: "Super-Admin",
-        title: "Subscription Plan",
-        message: `Hi, A user just subscribed for plan- ${subscriptionPlan.planType}`,
-      })
+      Promise.all([
+        await NotificationRepository.createNotification({
+          recipientId: new mongoose.Types.ObjectId(transaction.userId),
+          recipient: "User",
+          title: "Subscription Plan Successful",
+          message: `You have successfully subscribed for plan- ${subscriptionPlan.planType}. Your subscription expires on ${expiryDate} and you can renew your subscription. You can now enroll for a course. Enjoy your learning journey.`,
+        }),
+        await NotificationRepository.createNotification({
+          recipient: "Super-Admin",
+          title: "Subscription Plan",
+          message: `Hi, A user just subscribed for plan- ${subscriptionPlan.planType}`,
+        }),
+        await sendMailNotification(
+          transaction.userId.email,
+          "Subscription Plan Successful",
+          {
+            expiryDate,
+            username: transaction.userId.username,
+            planType: subscriptionPlan.planType,
+          },
+          "COURSE_ENROL"
+        ),
+      ])
     } catch (error) {
       console.log("notification error", error)
     }
