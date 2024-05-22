@@ -41,6 +41,7 @@ class TransactionService {
     const existingSubscription = await SubscriptionRepository.fetchOne({
       userId: new mongoose.Types.ObjectId(userId),
       status: "active",
+      expired: false,
     })
 
     if (existingSubscription)
