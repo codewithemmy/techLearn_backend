@@ -94,6 +94,19 @@ const coursesAndUsersController = async (req, res, next) => {
   return responseHandler(res, 200, data)
 }
 
+const superAdminUpdateAdminController = async (req, res, next) => {
+  const value = await fileModifier(req)
+  const [error, data] = await manageAsyncOps(
+    AdminAuthService.updateAdminService(value, req.params.id)
+  )
+
+  if (error) return next(error)
+
+  if (!data.success) return next(new CustomError(data.msg, 400, data))
+
+  return responseHandler(res, 200, data)
+}
+
 module.exports = {
   adminSignUpController,
   adminLogin,
@@ -103,4 +116,5 @@ module.exports = {
   dashboardAnalysisController,
   instructorDashboardAnalysisController,
   coursesAndUsersController,
+  superAdminUpdateAdminController,
 }

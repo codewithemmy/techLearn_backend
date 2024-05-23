@@ -11,6 +11,7 @@ const {
   dashboardAnalysisController,
   instructorDashboardAnalysisController,
   coursesAndUsersController,
+  superAdminUpdateAdminController,
 } = require("./admin.controller")
 
 //admin route
@@ -33,5 +34,13 @@ adminRoute
 
 //admin role users and courses
 adminRoute.route("/course-list").get(coursesAndUsersController)
+
+//super admin updating admin
+adminRoute
+  .route("/update/:id")
+  .patch(
+    uploadManager("profileImage").single("image"),
+    superAdminUpdateAdminController
+  )
 
 module.exports = adminRoute
