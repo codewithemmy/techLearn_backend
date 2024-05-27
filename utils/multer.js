@@ -92,9 +92,10 @@ const videoChunkUpload = async (destination, req) => {
     return result.secure_url
   } catch (error) {
     // Handle any errors
-    return res
-      .status(500)
-      .json({ msg: `Error uploading large video: ${error}`, status: 500 })
+    return res.json({
+      msg: `Error uploading large video: ${error}`,
+      status: 500,
+    })
   }
 }
 
