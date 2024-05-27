@@ -3,6 +3,7 @@ const cloudinary = require("cloudinary").v2
 const { CloudinaryStorage } = require("multer-storage-cloudinary")
 const { config } = require("../core/config")
 const fs = require("fs")
+const path = "./uploads"
 
 cloudinary.config({
   cloud_name: config.CLOUDINARY_NAME,
@@ -79,16 +80,16 @@ const videoChunkUpload = async (destination, req) => {
         .status(400)
         .json({ msg: `Error uploading large video: ${error}`, status: 400 })
     }
-    // Define the path to the uploads directory
-    const uploadDir = path.join(__dirname, "..", "uploads")
-    const resolvedPath = path.join(uploadDir, file.filename)
 
     // Asynchronously delete the file after upload
-    fs.unlink(resolvedPath, (unlinkError) => {
-      if (unlinkError) {
-        console.error(`Error deleting file: ${unlinkError.message}`)
+    fs.rm(path, { recursive: true }, (err) => {
+      if (err) {
+        console.error(`Error while deleting ${path}.`, err)
+      } else {
+        console.log(`${path} is deleted!`)
       }
     })
+
     return result.secure_url
   } catch (error) {
     // Handle any errors

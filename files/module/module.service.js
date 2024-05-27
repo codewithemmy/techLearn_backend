@@ -158,7 +158,6 @@ class ModuleService {
     if (payload && payload.file) {
       moduleVideo = await videoChunkUpload("moduleVideo", payload)
     }
-    console.log("moduleVideo", moduleVideo)
     if (!moduleVideo) {
       return {
         success: false,
