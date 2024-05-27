@@ -13,7 +13,6 @@ const {
 const {
   NotificationRepository,
 } = require("../notification/notification.repository")
-const { videoChunkUpload } = require("../../utils/multer")
 const { sendMailNotification } = require("../../utils/email")
 
 class CourseService {
@@ -50,16 +49,17 @@ class CourseService {
     if (error) return { success: false, msg: error }
 
     let extra = {}
-    if (!locals.isAdmin) {
-      extra = { approved: true }
-    }
     if (locals.role === "instructor") {
       const admin = await AdminRepository.fetchAdmin({
         _id: new mongoose.Types.ObjectId(locals._id),
       })
 
+      if (!admin) {
+        return { success: false, msg: `Invalid adminId` }
+      }
+
       const instructorCourse = await CourseRepository.fetchOne({
-        _id: admin.courseId,
+        _id: new mongoose.Types.ObjectId(admin.courseId),
       })
 
       if (!instructorCourse)
@@ -138,81 +138,6 @@ class CourseService {
       }
 
     return { success: true, msg: `Course deleted successfully` }
-  }
-
-  //update modules
-  static async updateCourseModule(payload, moduleId) {
-    const { body } = payload
-    let moduleVideo
-    if (payload && payload.file) {
-      moduleVideo = await videoChunkUpload("moduleVideo", payload)
-    }
-    const course = await CourseRepository.updateCourseDetails(
-      { "modules._id": moduleId },
-      {
-        $set: {
-          "modules.$.module": body.module,
-          "modules.$.moduleNumber": body.moduleNumber,
-          "modules.$.overview": body.overview,
-          "modules.$.lessonNoteTitle": body.lessonNoteTitle,
-          "modules.$.lessonNoteContent": body.lessonNoteContent,
-          "modules.$.assessmentInstruction": body.assessmentInstruction,
-          "modules.$.assessment": body.assessment,
-          "modules.$.video": moduleVideo,
-        },
-      }
-    )
-
-    if (!course)
-      return {
-        success: false,
-        msg: `Unable to update or possibly  wrong  module id`,
-      }
-
-    return { success: true, msg: CourseSuccess.UPDATE }
-  }
-
-  //update modules
-  static async updateModule(payload, courseId) {
-    const { body } = payload
-    let moduleVideo
-    if (payload && payload.file) {
-      moduleVideo = await videoChunkUpload("moduleVideo", payload)
-    }
-
-    // if (!body.moduleNumber || !body.lessonNoteContent)
-    //   return {
-    //     success: false,
-    //     msg: `moduleNumber, lessonNoteContent or lessonNoteContent cannot be empty`,
-    //   }
-    const course = await CourseRepository.updateCourseDetails(
-      { _id: new mongoose.Types.ObjectId(courseId) },
-      {
-        $addToSet: {
-          modules: {
-            module: body.module,
-            moduleNumber: body.moduleNumber,
-            lessonNoteTitle: body.lessonNoteTitle,
-            lessonNoteContent: body.lessonNoteContent,
-            assessmentInstruction: body.assessmentInstruction,
-            assessment: body.assessment,
-            video: moduleVideo,
-          },
-        },
-      }
-    )
-    if (!course)
-      return {
-        success: false,
-        msg: `Unable to update or possibly  wrong  module id`,
-      }
-
-    return {
-      success: true,
-      msg: `Module updated successfully`,
-      moduleId: course.modules.slice(-1)[0]._id,
-      data: course,
-    }
   }
 
   //update modules assessment
@@ -526,21 +451,6 @@ class CourseService {
       success: true,
       msg: CourseSuccess.UPDATE,
       data: { result, grade: assessmentRecord.grade },
-    }
-  }
-
-  //get only course modules
-  static async fetchOnlyCourseModules(params) {
-    const course = await CourseRepository.fetchOne({
-      _id: new mongoose.Types.ObjectId(params),
-    })
-
-    if (!course) return { success: true, msg: `Invalid courseId` }
-
-    return {
-      success: true,
-      msg: `Course fetch successfully`,
-      data: course.modules,
     }
   }
 }

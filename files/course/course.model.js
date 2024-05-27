@@ -31,19 +31,8 @@ const courseSchema = new mongoose.Schema(
     },
     modules: [
       {
-        module: { type: String },
-        moduleNumber: { type: Number },
-        lessonNoteTitle: { type: String },
-        lessonNoteContent: { type: String },
-        assessmentInstruction: { type: String },
-        assessment: [
-          {
-            question: { type: String },
-            options: [{ type: String }],
-            answer: { type: Number },
-          },
-        ],
-        video: { type: String },
+        type: mongoose.Types.ObjectId,
+        ref: "CourseModule",
       },
     ],
     createdBy: {

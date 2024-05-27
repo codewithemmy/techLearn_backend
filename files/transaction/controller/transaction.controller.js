@@ -8,7 +8,11 @@ const crypto = require("crypto")
 
 const paymentTransactionController = async (req, res, next) => {
   const [error, data] = await manageAsyncOps(
-    TransactionService.initiatePaymentTransaction(req.body)
+    TransactionService.initiatePaymentTransaction({
+      ...req.body,
+      userId: res.locals.jwt._id,
+      email: res.locals.jwt.email,
+    })
   )
 
   if (error) return next(error)

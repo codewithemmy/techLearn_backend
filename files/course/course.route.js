@@ -1,16 +1,14 @@
 const courseRoute = require("express").Router()
 const { isAuthenticated, adminVerifier } = require("../../utils")
-const { uploadManager, multerConfig } = require("../../utils/multer")
+const { uploadManager } = require("../../utils/multer")
 const {
   createCourseController,
   getCourseController,
   updateCourseController,
-  updateCourseModuleController,
   updateAssessmentController,
   studentEnrollmentController,
   courseStudentController,
   moduleAssessmentController,
-  updateModuleController,
   userEnrolledCourseController,
   getSingleModuleController,
   virtualClassRequestController,
@@ -18,8 +16,6 @@ const {
   softDeleteCourseController,
   fetchOnlyCourseModulesController,
 } = require("./course.controller")
-
-const uploadMiddleware = multerConfig.single("video")
 
 courseRoute.use(isAuthenticated)
 
@@ -35,14 +31,6 @@ courseRoute
 courseRoute
   .route("/:id")
   .patch(uploadManager("image").single("image"), updateCourseController)
-
-courseRoute
-  .route("/module/:id")
-  .patch(uploadMiddleware, updateCourseModuleController)
-
-courseRoute
-  .route("/add-module/:id")
-  .patch(uploadMiddleware, updateModuleController)
 
 courseRoute.route("/module/assessment/:id").patch(updateAssessmentController)
 

@@ -21,6 +21,7 @@ class CourseRepository {
     const { limit, skip, sort, ...restOfPayload } = payload
 
     const course = await Course.find({ ...restOfPayload })
+      .populate({ path: "modules" })
       .sort(sort)
       .skip(skip)
       .limit(limit)

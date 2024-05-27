@@ -94,6 +94,7 @@ class AdminAuthService {
       email: admin.email,
       accountType: admin.accountType,
       accountType: admin.role,
+      courseId: admin.courseId,
       status: admin.status,
       role: admin.role,
       isAdmin: true,
