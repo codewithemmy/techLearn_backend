@@ -148,38 +148,49 @@ class ModuleService {
       data: module,
     }
   }
-
+  
   static async uploadLessonVideo(payload, lessonId) {
-    if (!payload.file) {
-      return { success: false, msg: "Only video for lesson is allowed" }
-    }
-
-    let moduleVideo
-    if (payload && payload.file) {
-      moduleVideo = await videoChunkUpload("moduleVideo", payload)
-    }
-    if (!moduleVideo) {
-      return {
-        success: false,
-        msg: "Failed to upload the video or like network issue",
-      }
-    }
-    // Update the lesson video in the module lesson
-    const updateResult = await ModuleRepository.updateCourseDetails(
-      { "lessons._id": lessonId },
-      {
-        $set: {
-          "lessons.$.video": moduleVideo,
-        },
-      }
-    )
-    if (!updateResult)
-      return {
-        success: false,
-        msg: `Unable to add lesson video or possibly  wrong  lessonId`,
+    try {
+      if (!payload.file) {
+        return { success: false, msg: "Only video for lesson is allowed" }
       }
 
-    return { success: true, msg: `Lesson video added successfully` }
+      let moduleVideo
+      if (payload && payload.file) {
+        moduleVideo = await videoChunkUpload("moduleVideo", payload)
+      }
+
+      if (!moduleVideo) {
+        return {
+          success: false,
+          msg: "Failed to upload the video or network issue",
+        }
+      }
+
+      const updateResult = await ModuleRepository.updateCourseDetails(
+        { "lessons._id": lessonId },
+        {
+          $set: {
+            "lessons.$.video": moduleVideo,
+          },
+        }
+      )
+
+      if (!updateResult) {
+        return {
+          success: false,
+          msg: "Unable to add lesson video or possibly wrong lessonId",
+        }
+      }
+
+      return { success: true, msg: "Lesson video added successfully" }
+    } catch (error) {
+      console.error(`Error in uploadLessonVideo: ${error.message}`)
+      return {
+        success: false,
+        msg: `Unexpected error occurred: ${error.message}`,
+      }
+    }
   }
 }
 

@@ -53,6 +53,9 @@ const multerConfig = multer({ dest: "uploads/" }) // Define Multer destination f
 const videoChunkUpload = async (destination, req) => {
   try {
     const { file } = req // Assuming file is added to the request by Multer
+    if (!file || !file.path) {
+      throw new Error("File or file path is missing in the request.")
+    }
 
     // Create a promise to upload the large video file to Cloudinary
     const uploadPromise = new Promise((resolve, reject) => {
@@ -89,11 +92,10 @@ const videoChunkUpload = async (destination, req) => {
         console.log(`${path} is deleted!`)
       }
     })
-
     return result.secure_url
   } catch (error) {
-    // Handle any errors
-    throw new Error(`Error uploading large video: ${error}`)
+   console.error(`Error uploading large video: ${error.message}`)
+   throw error
   }
 }
 
