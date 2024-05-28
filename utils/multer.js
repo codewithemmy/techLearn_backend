@@ -64,7 +64,7 @@ const videoChunkUpload = async (destination, req) => {
         {
           folder: `TechLearn/module-video/${destination}`,
           resource_type: "video",
-          chunk_size: 6000000,
+          chunk_size: 2000000,
           eager_async: true, // Enable eager transformation asynchronously
         },
         (error, result) => {
