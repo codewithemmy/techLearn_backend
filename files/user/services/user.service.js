@@ -34,7 +34,7 @@ class UserService {
     const user = await UserRepository.create({
       ...payload,
       password: await hashPassword(payload.password),
-      emailVerificationOtp: await hashPassword(randomOtp),
+      emailVerificationOtp: randomOtp,
     })
 
     if (!user._id) return { success: false, msg: UserFailure.CREATE }
@@ -254,10 +254,8 @@ class UserService {
 
     if (!user) return { success: false, msg: UserFailure.OTP }
 
-    const verifyOtp = await verifyPassword(otp, user.emailVerificationOtp)
-    console.log(verifyOtp)
-
-    if (!verifyOtp) return { success: false, msg: `Incorrect Otp` }
+    if (otp !== user.emailVerificationOtp)
+      return { success: false, msg: `Incorrect Otp` }
 
     user.emailVerificationOtp = null
     user.isVerified = true
