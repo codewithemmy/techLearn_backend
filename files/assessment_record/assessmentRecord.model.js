@@ -3,7 +3,8 @@ const mongoose = require("mongoose")
 const assessmentRecordSchema = new mongoose.Schema(
   {
     moduleId: {
-      type: String,
+      type: mongoose.Types.ObjectId,
+      ref: "CourseModule",
     },
     moduleTitle: { type: String },
     score: {

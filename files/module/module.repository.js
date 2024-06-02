@@ -35,7 +35,7 @@ class ModuleRepository {
     return module
   }
 
-  static async updateCourseDetails(params, payload) {
+  static async updateModuleDetails(params, payload) {
     const module = await CourseModule.findOneAndUpdate(
       {
         ...params,

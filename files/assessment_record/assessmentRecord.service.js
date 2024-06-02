@@ -21,7 +21,7 @@ class AssessmentRecordService {
     }
   }
 
-  static async getAssessment(payload) {
+  static async getAssessment(payload, locals) {
     const { error, params, limit, skip, sort } = queryConstructor(
       payload,
       "createdAt",
@@ -29,9 +29,12 @@ class AssessmentRecordService {
     )
     if (error) return { success: false, msg: error }
 
+    let extra = { userId: new mongoose.Types.ObjectId(locals) }
+
     const assessment =
       await AssessmentRecordRepository.findAllAssessmentRecordParams({
         ...params,
+        ...extra,
         limit,
         skip,
         sort,

@@ -5,10 +5,8 @@ const {
   createCourseController,
   getCourseController,
   updateCourseController,
-  updateAssessmentController,
   studentEnrollmentController,
   courseStudentController,
-  moduleAssessmentController,
   userEnrolledCourseController,
   getSingleModuleController,
   virtualClassRequestController,
@@ -32,8 +30,6 @@ courseRoute
   .route("/:id")
   .patch(uploadManager("image").single("image"), updateCourseController)
 
-courseRoute.route("/module/assessment/:id").patch(updateAssessmentController)
-
 courseRoute.route("/module/:courseId/:moduleId").get(getSingleModuleController)
 
 //get course
@@ -50,9 +46,6 @@ courseRoute.route("/student/:id").get(courseStudentController)
 
 //course student
 courseRoute.route("/user-course").get(userEnrolledCourseController)
-
-//module assessment or test
-courseRoute.route("/module-assessment").post(moduleAssessmentController)
 
 //virtual class request
 courseRoute.route("/virtual-class-request").get(virtualClassRequestController)

@@ -220,10 +220,8 @@ class UserService {
 
     let randomOtp = AlphaNumeric(4, "number")
 
-    const newOtp = await hashPassword(randomOtp)
-
     //save otp to compare
-    user.emailVerificationOtp = newOtp
+    user.emailVerificationOtp = randomOtp
     await user.save()
 
     try {

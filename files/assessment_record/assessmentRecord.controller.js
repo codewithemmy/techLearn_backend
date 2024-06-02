@@ -19,7 +19,7 @@ const createAssessmentController = async (req, res, next) => {
 
 const getAssessmentController = async (req, res, next) => {
   const [error, data] = await manageAsyncOps(
-    AssessmentRecordService.getAssessment(req.query, res.locals.jwt)
+    AssessmentRecordService.getAssessment(req.query, res.locals.jwt._id)
   )
 
   if (error) return next(error)

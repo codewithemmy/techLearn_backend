@@ -1,6 +1,5 @@
 const assessmentRoute = require("express").Router()
-const { isAuthenticated, adminVerifier } = require("../../utils")
-const { uploadManager } = require("../../utils/multer")
+const { isAuthenticated } = require("../../utils")
 const {
   updateAssessmentController,
   createAssessmentController,
