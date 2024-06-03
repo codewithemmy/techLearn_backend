@@ -9,8 +9,6 @@ const {
   courseStudentController,
   userEnrolledCourseController,
   getSingleModuleController,
-  virtualClassRequestController,
-  virtualClassLinkController,
   softDeleteCourseController,
   fetchOnlyCourseModulesController,
 } = require("./course.controller")
@@ -46,12 +44,6 @@ courseRoute.route("/student/:id").get(courseStudentController)
 
 //course student
 courseRoute.route("/user-course").get(userEnrolledCourseController)
-
-//virtual class request
-courseRoute.route("/virtual-class-request").get(virtualClassRequestController)
-
-//virtual class link
-courseRoute.route("/virtual-class-link").post(virtualClassLinkController)
 
 //soft delete course
 courseRoute.route("/:id").delete(softDeleteCourseController)

@@ -27,6 +27,17 @@ const adminVerifier = (req, res, next) => {
   }
 }
 
+const instructorVerifier = (req, res, next) => {
+  if (res.locals.jwt.role === "instructor") {
+    //res.locals.jwt is got from the isAuthenticated middleware
+    next()
+  } else {
+    return res
+      .status(401)
+      .json({ result: "Unauthorized, Access Denied", status: 401 })
+  }
+}
+
 const AlphaNumeric = (length, type = "alpha") => {
   var result = ""
   var characters =
@@ -226,6 +237,7 @@ const generateOtp = () => {
 module.exports = {
   tokenHandler,
   adminVerifier,
+  instructorVerifier,
   AlphaNumeric,
   queryConstructor,
   fileModifier,

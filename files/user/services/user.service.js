@@ -141,6 +141,7 @@ class UserService {
       userType: user.userType,
       fullName: user.fullName,
       email: user.email,
+      courseId: user.courseId,
     })
 
     //return result

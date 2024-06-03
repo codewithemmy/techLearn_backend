@@ -12,6 +12,7 @@ const notificationRoute = require("../files/notification/notification.route")
 const googleRoute = require("../files/google_auth/google.route")
 const facebookRoute = require("../files/facebook_auth/facebook.route")
 const moduleRoute = require("../files/module/module.route")
+const virtualClassRoute = require("../files/virtualClass/virtual.class.routes")
 
 const routes = (app) => {
   const base_url = "/api/v1"
@@ -28,6 +29,7 @@ const routes = (app) => {
   app.use(`${base_url}/support`, supportRoute)
   app.use(`${base_url}/contact`, contactRoute)
   app.use(`${base_url}/notification`, notificationRoute)
+  app.use(`${base_url}/virtual-class`, virtualClassRoute)
   app.use("", googleRoute)
   app.use("", facebookRoute)
 }
