@@ -62,7 +62,7 @@ const videoChunkUpload = async (destination, req) => {
       cloudinary.uploader.upload_large(
         file.path,
         {
-          folder: `TechLearn/module-video/${destination}`,
+          folder: `TechLearn/${destination}`,
           resource_type: "video",
           chunk_size: 2000000,
           eager_async: true, // Enable eager transformation asynchronously

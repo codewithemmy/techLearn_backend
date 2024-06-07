@@ -151,9 +151,13 @@ class ModuleService {
         return { success: false, msg: "Only video for lesson is allowed" }
       }
 
+      const lesson = await ModuleRepository.fetchOne({
+        "lessons._id": lessonId,
+      })
+      if (!lesson) return { success: false, msg: `Invalid lesson id` }
       let moduleVideo
       if (payload && payload.file) {
-        moduleVideo = await videoChunkUpload("moduleVideo", payload)
+        moduleVideo = await videoChunkUpload(`${lesson.title}`, payload)
       }
 
       if (!moduleVideo) {
