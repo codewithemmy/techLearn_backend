@@ -17,6 +17,10 @@ const { CourseRepository } = require("../../files/course/course.repository")
 const {
   NotificationRepository,
 } = require("../notification/notification.repository")
+const { TextRepository } = require("../messages/texts/text.repository")
+const {
+  ConversationRepository,
+} = require("../messages/conversations/conversation.repository")
 
 class AdminAuthService {
   static async adminSignUpService(body) {
@@ -43,6 +47,22 @@ class AdminAuthService {
 
     if (!signUp._id)
       return { success: false, msg: authMessages.ADMIN_NOT_CREATED }
+
+    //create course chat or conversation group
+    if (body.role === "instructor") {
+      const conversation = await ConversationRepository.createConversation({
+        courseId: new mongoose.Types.ObjectId(courseId),
+        instructorId: new mongoose.Types.ObjectId(signUp._id),
+      })
+
+      const text = await TextRepository.createText({
+        senderId: new mongoose.Types.ObjectId(signUp._id),
+        sender: "Admin",
+        conversationId: new mongoose.Types.ObjectId(conversation._id),
+        message: `Hello! Welcome to the chat group`,
+        courseId,
+      })
+    }
 
     try {
       await NotificationRepository.createNotification({

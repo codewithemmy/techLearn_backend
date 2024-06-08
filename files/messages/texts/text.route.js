@@ -5,9 +5,7 @@ const {
   sendTextController,
   fetchTextsController,
 } = require("./text.controller")
-// const {
-//   textValidation,
-// } = require("../../../validation/text/sendText.validation")
+
 
 textRoute.use(isAuthenticated)
 
