@@ -207,6 +207,14 @@ class ModuleService {
         msg: `Invalid module Id`,
       }
 
+    //check if answer length is equal to questions length in assessment
+    const questionsLength = module.assessment.length
+    if (answer.length !== questionsLength)
+      return {
+        success: false,
+        msg: `Questions not completely answered. Kindly answer all questions`,
+      }
+
     // Map only the assessment array from the module and console.log it
     const assessmentArray = module.assessment.map((question) => question)
     // Initialize an empty array to store the results
