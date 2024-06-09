@@ -272,6 +272,7 @@ class ModuleService {
   //update modules assessment
   static async updateModuleAssessment(payload, moduleId) {
     const { question, options, answer } = payload
+    consol.log("payload", payload)
     if (!question) return { success: false, msg: `question field is empty` }
     if (!answer) return { success: false, msg: `answer field is empty` }
     if (!options || options.length < 1)
