@@ -272,6 +272,13 @@ class ModuleService {
   //update modules assessment
   static async updateModuleAssessment(payload, moduleId) {
     const { question, options, answer } = payload
+    if (!question) return { success: false, msg: `question field is empty` }
+    if (!answer) return { success: false, msg: `answer field is empty` }
+    if (!options || options.length < 1)
+      return {
+        success: false,
+        msg: `options field is empty or no options in the array`,
+      }
 
     const module = await ModuleRepository.updateModuleDetails(
       { _id: new mongoose.Types.ObjectId(moduleId) },
