@@ -11,6 +11,7 @@ const {
   getSingleModuleController,
   softDeleteCourseController,
   fetchOnlyCourseModulesController,
+  getFreeCourseController,
 } = require("./course.controller")
 
 courseRoute.use(isAuthenticated)
@@ -32,6 +33,9 @@ courseRoute.route("/module/:courseId/:moduleId").get(getSingleModuleController)
 
 //get course
 courseRoute.route("/").get(getCourseController)
+
+//get get course
+courseRoute.route("/free").get(getFreeCourseController)
 
 //get only modules
 courseRoute.route("/course-modules/:id").get(fetchOnlyCourseModulesController)

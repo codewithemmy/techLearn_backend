@@ -23,6 +23,16 @@ const getCourseController = async (req, res, next) => {
   return responseHandler(res, SUCCESS, data)
 }
 
+//this is for free course
+const getFreeCourseController = async (req, res, next) => {
+  const [error, data] = await manageAsyncOps(
+    CourseService.getCourse({ ...req.query, free: true }, res.locals.jwt)
+  )
+  if (error) return next(error)
+  if (!data.success) return next(new CustomError(data.msg, BAD_REQUEST, data))
+  return responseHandler(res, SUCCESS, data)
+}
+
 const updateCourseController = async (req, res, next) => {
   let value = await fileModifier(req)
   const [error, data] = await manageAsyncOps(
@@ -110,4 +120,5 @@ module.exports = {
   userEnrolledCourseController,
   softDeleteCourseController,
   fetchOnlyCourseModulesController,
+  getFreeCourseController,
 }

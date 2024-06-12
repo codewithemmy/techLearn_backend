@@ -75,6 +75,7 @@ class CourseService {
       ...params,
       ...extra,
       isDelete: false,
+      free: false,
       limit,
       skip,
       sort,

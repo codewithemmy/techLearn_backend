@@ -8,7 +8,7 @@ const {
 
 assessmentRoute.use(isAuthenticated)
 
-//routes
+
 assessmentRoute.route("/").post(createAssessmentController)
 
 assessmentRoute.route("/:id").patch(updateAssessmentController)
