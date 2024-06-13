@@ -14,9 +14,6 @@ const {
   getFreeCourseController,
 } = require("./course.controller")
 
-//get get course
-courseRoute.route("/free").get(getFreeCourseController)
-
 courseRoute.use(isAuthenticated)
 
 //routes
@@ -36,6 +33,9 @@ courseRoute.route("/module/:courseId/:moduleId").get(getSingleModuleController)
 
 //get course
 courseRoute.route("/").get(getCourseController)
+
+//get get course
+courseRoute.route("/free").get(getFreeCourseController)
 
 //get only modules
 courseRoute.route("/course-modules/:id").get(fetchOnlyCourseModulesController)
