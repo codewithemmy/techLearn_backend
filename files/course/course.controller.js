@@ -23,7 +23,7 @@ const getCourseController = async (req, res, next) => {
   return responseHandler(res, SUCCESS, data)
 }
 
-//this is for free course
+//this is for free course, controller
 const getFreeCourseController = async (req, res, next) => {
   const [error, data] = await manageAsyncOps(
     CourseService.getCourse({ ...req.query, free: true }, res.locals.jwt)
