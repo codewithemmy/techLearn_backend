@@ -56,7 +56,7 @@ class UserService {
       await NotificationRepository.createNotification({
         recipientId: new mongoose.Types.ObjectId(user._id),
         recipient: "User",
-        title: "Divvicson: Welcome",
+        title: "Intellio: Welcome",
         message: `You have successfully registered as a user to Divvicson E-Learning platform. Enjoy your ride`,
       })
     } catch (error) {
