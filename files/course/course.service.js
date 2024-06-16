@@ -268,6 +268,7 @@ class CourseService {
 
     //check if answer length is equal to questions length in assessment
     const questionsLength = course.assessment.length
+
     if (answer.length !== questionsLength)
       return {
         success: false,
