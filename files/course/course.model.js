@@ -33,6 +33,13 @@ const courseSchema = new mongoose.Schema(
       type: Boolean,
       default: false,
     },
+    assessment: [
+      {
+        question: { type: String },
+        options: [{ type: String }],
+        answer: { type: Number },
+      },
+    ],
     modules: [
       {
         type: mongoose.Types.ObjectId,

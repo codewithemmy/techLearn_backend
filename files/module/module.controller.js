@@ -62,24 +62,6 @@ const fetchSingleModuleController = async (req, res, next) => {
   return responseHandler(res, 200, data)
 }
 
-const updateAssessmentController = async (req, res, next) => {
-  const [error, data] = await manageAsyncOps(
-    ModuleService.updateModuleAssessment(req.body, req.params.id)
-  )
-  if (error) return next(error)
-  if (!data.success) return next(new CustomError(data.msg, BAD_REQUEST, data))
-  return responseHandler(res, SUCCESS, data)
-}
-
-const moduleAssessmentController = async (req, res, next) => {
-  const [error, data] = await manageAsyncOps(
-    ModuleService.moduleAssessmentTest(req.body, res.locals.jwt._id)
-  )
-  if (error) return next(error)
-  if (!data.success) return next(new CustomError(data.msg, BAD_REQUEST, data))
-  return responseHandler(res, SUCCESS, data)
-}
-
 module.exports = {
   createModuleController,
   getModuleController,
@@ -87,6 +69,4 @@ module.exports = {
   fetchSingleModuleController,
   addLessonController,
   addLessonVideoController,
-  updateAssessmentController,
-  moduleAssessmentController,
 }

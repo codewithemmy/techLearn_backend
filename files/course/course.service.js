@@ -235,6 +235,95 @@ class CourseService {
 
     return { success: true, msg: CourseSuccess.FETCH, data: course }
   }
+
+  //adding assessment to course
+  static async updateCourseAssessment(payload, courseId) {
+    const course = await CourseRepository.updateCourseDetails(
+      { _id: new mongoose.Types.ObjectId(courseId) },
+      { $push: { assessment: [...payload] } }
+    )
+
+    if (!course)
+      return {
+        success: false,
+        msg: `Unable to update or possibly wrong course id`,
+      }
+
+    return { success: true, msg: `Assessment added successfully`, data: course }
+  }
+
+  //course assessment or test
+  static async courseAssessmentTest(payload, locals) {
+    const { courseId, answer } = payload
+
+    const course = await CourseRepository.fetchOne({
+      _id: new mongoose.Types.ObjectId(courseId),
+    })
+
+    if (!course)
+      return {
+        success: false,
+        msg: `Invalid course Id`,
+      }
+
+    //check if answer length is equal to questions length in assessment
+    const questionsLength = course.assessment.length
+    if (answer.length !== questionsLength)
+      return {
+        success: false,
+        msg: `Questions not completely answered. Kindly answer all questions`,
+      }
+
+    // Map only the assessment array from the course and console.log it
+    const assessmentArray = course.assessment.map((question) => question)
+    // Initialize an empty array to store the results
+    let result = 0
+    let assessmentLength = 0
+    // Iterate through both arrays and compare elements
+    answer.forEach((payloadAnswer, index) => {
+      // Compare the payload answer with the corresponding assessment answer
+      if (payloadAnswer === assessmentArray[index].answer) {
+        assessmentLength += 1
+        let scorePercentage = (assessmentLength / answer.length) * 100
+        result = scorePercentage
+      }
+    })
+
+    let assessmentRecord
+    const confirmAssessmentRecord = await AssessmentRecordRepository.fetchOne({
+      courseId: new mongoose.Types.ObjectId(courseId),
+      userId: new mongoose.Types.ObjectId(locals),
+    })
+
+    if (!confirmAssessmentRecord) {
+      assessmentRecord = await AssessmentRecordRepository.create({
+        courseId: new mongoose.Types.ObjectId(courseId),
+        userId: new mongoose.Types.ObjectId(locals),
+        score: result,
+        grade: result < 50 ? "failed" : "success",
+      })
+
+      if (!assessmentRecord._id)
+        return { success: false, msg: `Unable to get assessment result` }
+    } else {
+      assessmentRecord =
+        await AssessmentRecordRepository.updateAssessmentRecordDetails(
+          { userId: new mongoose.Types.ObjectId(locals) },
+          {
+            courseId: new mongoose.Types.ObjectId(courseId),
+            userId: new mongoose.Types.ObjectId(locals),
+            score: result,
+            grade: result < 50 ? "failed" : "success",
+          }
+        )
+    }
+
+    return {
+      success: true,
+      msg: `Test complete`,
+      data: { result, grade: assessmentRecord.grade },
+    }
+  }
 }
 
 module.exports = { CourseService }

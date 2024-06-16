@@ -12,6 +12,8 @@ const {
   softDeleteCourseController,
   fetchOnlyCourseModulesController,
   getFreeCourseController,
+  updateCourseAssessmentController,
+  courseAssessmentController,
 } = require("./course.controller")
 
 courseRoute.use(isAuthenticated)
@@ -51,5 +53,10 @@ courseRoute.route("/user-course").get(userEnrolledCourseController)
 
 //soft delete course
 courseRoute.route("/:id").delete(softDeleteCourseController)
+
+courseRoute.route("/assessment/:id").patch(updateCourseAssessmentController)
+
+//course assessment or test
+courseRoute.route("/test").post(courseAssessmentController)
 
 module.exports = courseRoute

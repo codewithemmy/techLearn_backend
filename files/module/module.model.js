@@ -19,13 +19,6 @@ const courseModuleSchema = new mongoose.Schema(
         video: { type: String },
       },
     ],
-    assessment: [
-      {
-        question: { type: String },
-        options: [{ type: String }],
-        answer: { type: Number },
-      },
-    ],
     courseId: {
       type: mongoose.Types.ObjectId,
       ref: "Course",

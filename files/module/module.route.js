@@ -1,5 +1,5 @@
 const moduleRoute = require("express").Router()
-const { isAuthenticated, adminVerifier } = require("../../utils")
+const { isAuthenticated } = require("../../utils")
 const { uploadManager, multerConfig } = require("../../utils/multer")
 const {
   createModuleController,
@@ -7,8 +7,6 @@ const {
   getModuleController,
   addLessonController,
   addLessonVideoController,
-  moduleAssessmentController,
-  updateAssessmentController,
 } = require("./module.controller")
 
 const uploadMiddleware = multerConfig.single("video")
@@ -34,10 +32,5 @@ moduleRoute.route("/lesson/:id").patch(uploadMiddleware, addLessonController)
 moduleRoute
   .route("/lesson-video/:id")
   .patch(uploadMiddleware, addLessonVideoController)
-
-//module assessment or test
-moduleRoute.route("/test").post(moduleAssessmentController)
-
-moduleRoute.route("/assessment/:id").patch(updateAssessmentController)
 
 module.exports = moduleRoute
