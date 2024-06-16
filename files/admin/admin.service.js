@@ -51,7 +51,7 @@ class AdminAuthService {
     //create course chat or conversation group
     if (body.role === "instructor") {
       const conversation = await ConversationRepository.createConversation({
-        courseId: new mongoose.Types.ObjectId(courseId),
+        courseId: new mongoose.Types.ObjectId(body.courseId),
         instructorId: new mongoose.Types.ObjectId(signUp._id),
       })
 
@@ -60,7 +60,7 @@ class AdminAuthService {
         sender: "Admin",
         conversationId: new mongoose.Types.ObjectId(conversation._id),
         message: `Hello! Welcome to the chat group`,
-        courseId,
+        courseId: new mongoose.Types.ObjectId(body.courseId),
       })
     }
 
@@ -113,7 +113,7 @@ class AdminAuthService {
       _id: admin._id,
       email: admin.email,
       accountType: admin.accountType,
-      accountType: admin.role,
+      accountType: admin.accountType,
       courseId: admin.courseId,
       status: admin.status,
       role: admin.role,
@@ -131,7 +131,6 @@ class AdminAuthService {
         lastName: admin.lastName,
         email: admin.email,
         accountType: admin.accountType,
-        accountType: admin.role,
         status: admin.status,
         role: admin.role,
         ...token,
