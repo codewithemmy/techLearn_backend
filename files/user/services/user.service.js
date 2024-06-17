@@ -48,7 +48,7 @@ class UserService {
 
       await sendMailNotification(
         email,
-        "Tech-Learn Registration",
+        "Intellio Academy Registration",
         substitutional_parameters,
         "VERIFICATION"
       )
@@ -181,7 +181,7 @@ class UserService {
 
       await sendMailNotification(
         email,
-        "TechLearn Reset OTP",
+        "Reset OTP",
         substitutional_parameters,
         "RESET_OTP"
       )
@@ -233,7 +233,7 @@ class UserService {
 
       await sendMailNotification(
         email,
-        "TechLearn Reset OTP",
+        "Reset OTP",
         substitutional_parameters,
         "EMAIL_OTP"
       )

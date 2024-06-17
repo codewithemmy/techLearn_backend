@@ -70,7 +70,7 @@ class AdminAuthService {
         recipient: "Admin",
         title: "Instructor Account",
         message: `Congratulations, you a now a certified instructor for a course on
-          TechLearn`,
+          Intellio Academy`,
       })
 
       const substitutional_parameters = {

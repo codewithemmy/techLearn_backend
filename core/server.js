@@ -24,7 +24,7 @@ const startServer = () => {
   connectToDatabase()
 
   httpServer.listen(port, () => {
-    console.log(`TechLearn is running on port ${port}`)
+    console.log(`Intellio Academy is running on port ${port}`)
   })
 
   // Handle unhandled promise rejections and exceptions

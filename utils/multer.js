@@ -16,7 +16,7 @@ const uploadManager = (destination) => {
     storage: new CloudinaryStorage({
       cloudinary: cloudinary,
       params: {
-        folder: `TechLearn/${destination}`,
+        folder: `Intellio/${destination}`,
         quality: "auto:best",
       },
     }),
@@ -28,7 +28,7 @@ const videoManager = (destination) => {
     storage: new CloudinaryStorage({
       cloudinary: cloudinary,
       params: {
-        folder: `TechLearn/module-video/${destination}`,
+        folder: `Intellio/module-video/${destination}`,
         format: "mp4",
         resource_type: "video",
         eager_async: true, // Enable eager transformation asynchronously
@@ -62,7 +62,7 @@ const videoChunkUpload = async (destination, req) => {
       cloudinary.uploader.upload_large(
         file.path,
         {
-          folder: `TechLearn/${destination}`,
+          folder: `Intellio/${destination}`,
           resource_type: "video",
           chunk_size: 2000000,
           eager_async: true, // Enable eager transformation asynchronously
