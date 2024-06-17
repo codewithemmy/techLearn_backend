@@ -38,6 +38,22 @@ class AdminAuthService {
         msg: `Instructor cannot be added without a course`,
       }
 
+    //check if course is already assigned to an instructor
+    const course = await CourseRepository.fetchOne({
+      _id: new mongoose.Types.ObjectId(body.courseId),
+    })
+
+    if (!course) return { success: false, msg: `invalid course id ` }
+
+    //check if course is assigned already
+    const confirmAdminCourse = await AdminRepository.fetchAdmin({
+      courseId: new mongoose.Types.ObjectId(body.courseId),
+    })
+
+    if (confirmAdminCourse)
+      return { success: false, msg: `Course already assigned to an instructor` }
+
+    //create course
     const password = await hashPassword(body.password)
     const signUp = await AdminRepository.create({
       ...body,

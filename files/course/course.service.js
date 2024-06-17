@@ -19,6 +19,15 @@ class CourseService {
   static async createCourse(payload, locals) {
     const { image, body } = payload
 
+    //confirm if course exist
+    const checkCourse = await CourseRepository.fetchOne({ title: body.title })
+
+    if (checkCourse)
+      return {
+        success: false,
+        msg: `Course with the same title currently exist`,
+      }
+
     const course = await CourseRepository.create({
       ...body,
       courseCover: image,
