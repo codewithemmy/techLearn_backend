@@ -2,16 +2,15 @@ const nodemailer = require("nodemailer")
 const handlebars = require("handlebars")
 const fs = require("fs")
 const path = require("path")
-const { AuthSuccess, AuthFailure } = require("../files/auth/auth.messages")
+
 handlebars.registerHelper("eq", (a, b) => a == b)
 
-//set up mail transport
+// Set up mail transport
 const mailTransport = nodemailer.createTransport({
   host: process.env.SMS_HOST,
   port: process.env.SMS_PORT,
-  secure: true, // use TLS
-  debug: true,
-  connectionTimeout: 10000,
+  secure: false, // false for STARTTLS
+  requireTLS: true, // Use STARTTLS
   auth: {
     user: process.env.SMS_USER,
     pass: process.env.SMS_PASS,
@@ -36,19 +35,25 @@ const sendMailNotification = async (
   substitutional_parameters,
   Template_Name
 ) => {
-  const source = fs.readFileSync(
-    path.join(__dirname, `../templates/${Template_Name}.hbs`),
-    "utf8"
-  )
+  try {
+    const source = fs.readFileSync(
+      path.join(__dirname, `../templates/${Template_Name}.hbs`),
+      "utf8"
+    )
+    const compiledTemplate = handlebars.compile(source)
 
-  const compiledTemplate = handlebars.compile(source)
+    const mailOptions = {
+      from: '"Intellio" <info@intellio.academy>', // sender address
+      to: to_email, // list of receivers
+      subject: subject, // Subject line
+      html: compiledTemplate(substitutional_parameters),
+    }
 
-  await mailTransport.sendMail({
-    from: '"Citifix" <email@cityfix.ng>', // sender address
-    to: to_email, // list of receivers
-    subject: subject, // Subject line
-    html: compiledTemplate(substitutional_parameters),
-  })
+    await mailTransport.sendMail(mailOptions)
+    console.log(`Email sent to ${to_email}`)
+  } catch (error) {
+    console.error(`Error sending email to ${to_email}:`, error)
+  }
 }
 
 module.exports = { sendMailNotification }
