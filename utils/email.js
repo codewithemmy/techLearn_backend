@@ -7,13 +7,13 @@ handlebars.registerHelper("eq", (a, b) => a == b)
 
 // Set up mail transport
 const mailTransport = nodemailer.createTransport({
-  host: "business35.web-hosting.com",
-  port: 587,
+  host: process.env.SMS_HOST,
+  port: process.env.SMS_PORT,
   secure: false, // false for STARTTLS
   requireTLS: true, // Use STARTTLS
   auth: {
-    user: "info@intellio.academy",
-    pass: "bQHRI37qvgtC",
+    user: process.env.SMS_USER,
+    pass: process.env.SMS_PASS,
   },
   tls: {
     // do not fail on invalid certs
