@@ -263,7 +263,7 @@ class AdminAuthService {
     }, 0)
 
     let premiumPlan = revenue.filter((result) => {
-      return result.subscriptionPlanId.planType === "Premium Plan"
+      return result.subscriptionPlanId.planType === "premium"
     })
 
     let premiumProfit = premiumPlan.reduce((total, totalAmount) => {
@@ -271,7 +271,7 @@ class AdminAuthService {
     }, 0)
 
     let standardPlan = revenue.filter((result) => {
-      return result.subscriptionPlanId.planType === "Standard"
+      return result.subscriptionPlanId.planType === "standard"
     })
 
     let standardProfit = premiumPlan.reduce((total, totalAmount) => {
