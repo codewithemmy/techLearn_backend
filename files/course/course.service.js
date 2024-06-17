@@ -314,7 +314,7 @@ class CourseService {
             courseId: new mongoose.Types.ObjectId(courseId),
             userId: new mongoose.Types.ObjectId(locals),
             score: result,
-            grade: result < 50 ? "failed" : "success",
+            grade: result < 80 ? "failed" : "success",
           }
         )
     }
