@@ -1,6 +1,6 @@
 module.exports.UserSuccess = {
   CREATE:
-    "User successfully created, check your email for otp to verify your account ",
+    "User successfully created, check your email or spam for otp to verify your account",
   FETCH: "User successfully fetched",
   UPDATE: "Update Successful",
   DELETE: "Delete Successful",
