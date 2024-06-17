@@ -39,7 +39,7 @@ const application = (io) => {
   })
 
   app.get("/", (req, res) => {
-    res.status(200).json({ message: "citifix is working fine" })
+    res.status(200).json({ message: "Intellio Academy is working fine" })
   })
 
   routes(app)
