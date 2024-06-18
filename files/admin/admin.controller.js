@@ -114,7 +114,7 @@ const deleteAdminController = async (req, res, next) => {
 
   if (!data.success) return next(new CustomError(data.msg, 400, data))
 
-  return responseHandler(res, SUCCESS, data)
+  return responseHandler(res, 200, data)
 }
 
 module.exports = {
