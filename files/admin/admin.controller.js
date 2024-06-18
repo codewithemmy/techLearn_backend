@@ -104,6 +104,19 @@ const superAdminUpdateAdminController = async (req, res, next) => {
   return responseHandler(res, 200, data)
 }
 
+//delete admin controller
+const deleteAdminController = async (req, res, next) => {
+  const [error, data] = await manageAsyncOps(
+    AdminAuthService.deleteAdmin(req.params.id)
+  )
+
+  if (error) return next(error)
+
+  if (!data.success) return next(new CustomError(data.msg, 400, data))
+
+  return responseHandler(res, SUCCESS, data)
+}
+
 module.exports = {
   adminSignUpController,
   adminLogin,
@@ -114,4 +127,5 @@ module.exports = {
   instructorDashboardAnalysisController,
   coursesAndUsersController,
   superAdminUpdateAdminController,
+  deleteAdminController,
 }

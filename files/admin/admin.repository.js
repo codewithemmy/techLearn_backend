@@ -28,6 +28,10 @@ class AdminRepository {
       { new: true, runValidators: true }
     )
   }
+
+  static async deleteAdmin(query, params) {
+    return Admin.findOneAndDelete({ ...query })
+  }
 }
 
 module.exports = { AdminRepository }

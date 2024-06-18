@@ -392,6 +392,21 @@ class AdminAuthService {
       data: courseEnrollmentCounts,
     }
   }
+
+  //delete admin
+  static async deleteAdmin(adminId) {
+    const admin = await AdminRepository.deleteAdmin({
+      _id: new mongoose.Types.ObjectId(adminId),
+    })
+
+    if (!admin)
+      return {
+        success: false,
+        msg: `Unable to delete admin or likely invalid adminId`,
+      }
+
+    return { success: true, msg: `Admin deleted successfully` }
+  }
 }
 
 module.exports = { AdminAuthService }

@@ -143,7 +143,7 @@ class CourseService {
     if (!course)
       return {
         success: false,
-        msg: `Unable to delete course or likely courseId`,
+        msg: `Unable to delete course or likely invalid courseId`,
       }
 
     await ModuleRepository.deleteManyModules({

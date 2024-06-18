@@ -12,6 +12,7 @@ const {
   instructorDashboardAnalysisController,
   coursesAndUsersController,
   superAdminUpdateAdminController,
+  deleteAdminController,
 } = require("./admin.controller")
 
 //admin route
@@ -42,5 +43,8 @@ adminRoute
     uploadManager("profileImage").single("image"),
     superAdminUpdateAdminController
   )
+
+//delete admin route
+adminRoute.route("/:id").delete(deleteAdminController)
 
 module.exports = adminRoute
