@@ -43,7 +43,7 @@ class ModuleService {
       await NotificationRepository.createNotification({
         recipient: "Super-Admin",
         title: "Module",
-        message: `A module has been added by instructor: ${locals.firstName} ${locals.lastName} `,
+        message: `A module has been added by an instructor`,
       })
     } catch (error) {
       console.log("notification error", error)
