@@ -47,6 +47,14 @@ class CourseRepository {
 
     return course
   }
+
+  static async deleteCourseDetails(params, payload) {
+    const course = await Course.findOneAndDelete({
+      ...params,
+    })
+
+    return course
+  }
 }
 
 module.exports = { CourseRepository }

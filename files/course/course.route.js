@@ -51,7 +51,7 @@ courseRoute.route("/student/:id").get(courseStudentController)
 //course student
 courseRoute.route("/user-course").get(userEnrolledCourseController)
 
-//soft delete course
+//delete course
 courseRoute.route("/:id").delete(softDeleteCourseController)
 
 courseRoute.route("/assessment/:id").patch(updateCourseAssessmentController)

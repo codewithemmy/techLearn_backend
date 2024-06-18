@@ -14,6 +14,7 @@ const {
   NotificationRepository,
 } = require("../notification/notification.repository")
 const { sendMailNotification } = require("../../utils/email")
+const { ModuleRepository } = require("../module/module.repository")
 
 class CourseService {
   static async createCourse(payload, locals) {
@@ -135,16 +136,19 @@ class CourseService {
   }
 
   static async softDeleteCourse(courseParams) {
-    const course = await CourseRepository.updateCourseDetails(
-      { _id: new mongoose.Types.ObjectId(courseParams) },
-      { isDelete: true }
-    )
+    const course = await CourseRepository.deleteCourseDetails({
+      _id: new mongoose.Types.ObjectId(courseParams),
+    })
 
     if (!course)
       return {
         success: false,
         msg: `Unable to delete course or likely courseId`,
       }
+
+    await ModuleRepository.deleteManyModules({
+      courseId: new mongoose.Types.ObjectId(courseParams),
+    })
 
     return { success: true, msg: `Course deleted successfully` }
   }

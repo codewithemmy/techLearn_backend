@@ -46,6 +46,14 @@ class ModuleRepository {
 
     return module
   }
+
+  static async deleteManyModules(params, payload) {
+    const module = await CourseModule.deleteMany({
+      ...params,
+    })
+
+    return module
+  }
 }
 
 module.exports = { ModuleRepository }
