@@ -72,7 +72,6 @@ class ModuleService {
     const module = await ModuleRepository.findAllCourseParams({
       ...params,
       ...extra,
-      isDeleted: false,
       limit,
       skip,
       sort,
@@ -134,8 +133,7 @@ class ModuleService {
       }
     )
 
-    if (!module)
-      return { success: false, msg: `Module lesson added successfully` }
+    if (!module) return { success: false, msg: `Error adding module lesson` }
 
     return {
       success: true,
@@ -190,6 +188,31 @@ class ModuleService {
         success: false,
         msg: `Unexpected error occurred: ${error.message}`,
       }
+    }
+  }
+
+  //adding free course with module
+  static async addFreeModuleCourse(payload) {
+    const { body } = payload
+    let moduleVideo
+    if (payload && payload.file) {
+      moduleVideo = await videoChunkUpload("moduleVideo", payload)
+    }
+    const video = {
+      video: moduleVideo,
+    }
+    const module = await ModuleRepository.create({
+      title: body.title,
+      moduleType: "free",
+      lessons: [video],
+    })
+
+    if (!module) return { success: false, msg: `Error adding free course` }
+
+    return {
+      success: true,
+      msg: `Free added successfully`,
+      data: module,
     }
   }
 }

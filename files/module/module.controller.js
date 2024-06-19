@@ -62,6 +62,16 @@ const fetchSingleModuleController = async (req, res, next) => {
   return responseHandler(res, 200, data)
 }
 
+const addFreeModuleCourse = async (req, res, next) => {
+  const [error, data] = await manageAsyncOps(
+    ModuleService.addFreeModuleCourse(req)
+  )
+
+  if (error) return next(error)
+  if (!data.success) return next(new CustomError(data.msg, BAD_REQUEST, data))
+  return responseHandler(res, SUCCESS, data)
+}
+
 module.exports = {
   createModuleController,
   getModuleController,
@@ -69,4 +79,5 @@ module.exports = {
   fetchSingleModuleController,
   addLessonController,
   addLessonVideoController,
+  addFreeModuleCourse,
 }

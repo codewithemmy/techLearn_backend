@@ -7,6 +7,7 @@ const {
   getModuleController,
   addLessonController,
   addLessonVideoController,
+  addFreeModuleCourse,
 } = require("./module.controller")
 
 const uploadMiddleware = multerConfig.single("video")
@@ -32,5 +33,8 @@ moduleRoute.route("/lesson/:id").patch(uploadMiddleware, addLessonController)
 moduleRoute
   .route("/lesson-video/:id")
   .patch(uploadMiddleware, addLessonVideoController)
+
+//add free course module
+moduleRoute.route("/free").post(uploadMiddleware, addFreeModuleCourse)
 
 module.exports = moduleRoute

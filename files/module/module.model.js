@@ -8,6 +8,7 @@ const courseModuleSchema = new mongoose.Schema(
     title: {
       type: String,
     },
+    moduleType: { type: String },
     isDeleted: {
       type: Boolean,
       default: false,
@@ -22,7 +23,6 @@ const courseModuleSchema = new mongoose.Schema(
     courseId: {
       type: mongoose.Types.ObjectId,
       ref: "Course",
-      required: true,
     },
   },
   { timestamps: true }
