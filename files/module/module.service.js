@@ -215,6 +215,17 @@ class ModuleService {
       data: module,
     }
   }
+
+  //delete module
+  static async deleteModule(params) {
+    const module = await ModuleRepository.deleteModule({
+      _id: new mongoose.Types.ObjectId(params),
+    })
+
+    if (!module) return { success: false, msg: `Unable to delete module` }
+
+    return { success: true, msg: `Module deleted successfully` }
+  }
 }
 
 module.exports = { ModuleService }

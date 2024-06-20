@@ -47,8 +47,16 @@ class ModuleRepository {
     return module
   }
 
-  static async deleteManyModules(params, payload) {
+  static async deleteManyModules(params) {
     const module = await CourseModule.deleteMany({
+      ...params,
+    })
+
+    return module
+  }
+
+  static async deleteModule(params) {
+    const module = await CourseModule.findOneAndDelete({
       ...params,
     })
 
