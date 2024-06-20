@@ -7,7 +7,17 @@ class CourseRepository {
   }
 
   static async findCourseWithoutParams(payload, select) {
-    return Course.find({ ...payload }, { title: 1, overview: 1 }).select(select)
+    return Course.find(
+      { ...payload },
+      {
+        title: 1,
+        overview: 1,
+        jobOpening: 1,
+        medianSalary: 1,
+        hour: 1,
+        courseCover: 1,
+      }
+    ).select(select)
   }
   static async fetchOne(payload, select) {
     return Course.findOne({ ...payload }).select(select)
