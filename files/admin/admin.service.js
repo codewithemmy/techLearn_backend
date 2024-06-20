@@ -58,6 +58,7 @@ class AdminAuthService {
     const signUp = await AdminRepository.create({
       ...body,
       courseId: new mongoose.Types.ObjectId(body.courseId),
+      active: true,
       password,
     })
 
