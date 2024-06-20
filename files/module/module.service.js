@@ -1,6 +1,7 @@
 const { queryConstructor } = require("../../utils")
 const { ModuleFailure, ModuleSuccess } = require("./module.messages")
 const { ModuleRepository } = require("./module.repository")
+const DOMPurify = require("dompurify")
 const mongoose = require("mongoose")
 const { AdminRepository } = require("../admin/admin.repository")
 const {
@@ -116,17 +117,22 @@ class ModuleService {
 
   static async addModuleLesson(payload, params) {
     const { body } = payload
+    const { note } = body
+    if (!note) return { success: false, msg: `Note cannot be null` }
     let moduleVideo
     if (payload && payload.file) {
       moduleVideo = await videoChunkUpload("moduleVideo", payload)
     }
+
+    // Sanitize HTML content using DOMPurify
+    const sanitizedHTML = DOMPurify.sanitize(note)
     const module = await ModuleRepository.updateModuleDetails(
       { _id: new mongoose.Types.ObjectId(params) },
       {
         $addToSet: {
           lessons: {
             title: body.title,
-            note: body.note,
+            note: sanitizedHTML,
             video: moduleVideo,
           },
         },
