@@ -429,7 +429,7 @@ class AdminAuthService {
       console.log("error", error)
     }
 
-    return { success: true, msg: authMessages.ADMIN_CREATED }
+    return { success: true, msg: `subscription successful` }
   }
 }
 
