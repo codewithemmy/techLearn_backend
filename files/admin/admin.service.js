@@ -382,6 +382,10 @@ class AdminAuthService {
         _id: course._id,
         overview: course.overview,
         title: course.title,
+        jobOpening: course.jobOpening,
+        medianSalary: course.medianSalary,
+        hour: course.hour,
+        courseCover: course.courseCover,
         userCount: enrolledUsersCount,
       })
     }
