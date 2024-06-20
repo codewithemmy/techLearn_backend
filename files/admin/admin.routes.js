@@ -13,10 +13,14 @@ const {
   coursesAndUsersController,
   superAdminUpdateAdminController,
   deleteAdminController,
+  subscriberController,
 } = require("./admin.controller")
 
 //admin route
 adminRoute.route("/login").post(adminLogin)
+
+//subscriber route
+adminRoute.route("/subscribe").post(subscriberController)
 
 adminRoute.use(isAuthenticated)
 adminRoute.route("/").post(adminVerifier, adminSignUpController)

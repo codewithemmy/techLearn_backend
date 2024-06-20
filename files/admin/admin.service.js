@@ -412,6 +412,25 @@ class AdminAuthService {
 
     return { success: true, msg: `Admin deleted successfully` }
   }
+
+  static async subscriberService(body) {
+    try {
+      const substitutional_parameters = {
+        email: body.email,
+      }
+
+      await sendMailNotification(
+        "support@intellio.academy",
+        "A New Subscriber",
+        substitutional_parameters,
+        "SUBSCRIBER"
+      )
+    } catch (error) {
+      console.log("error", error)
+    }
+
+    return { success: true, msg: authMessages.ADMIN_CREATED }
+  }
 }
 
 module.exports = { AdminAuthService }
