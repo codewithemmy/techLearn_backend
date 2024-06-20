@@ -419,12 +419,14 @@ class AdminAuthService {
         email: body.email,
       }
 
-      await sendMailNotification(
+      const notification = await sendMailNotification(
         "support@intellio.academy",
         "A New Subscriber",
         substitutional_parameters,
         "SUBSCRIBER"
       )
+      if (!notification)
+        return { success: false, msg: `Unable to subscribe, try again` }
     } catch (error) {
       console.log("error", error)
     }
