@@ -425,8 +425,6 @@ class AdminAuthService {
         substitutional_parameters,
         "SUBSCRIBER"
       )
-      if (!notification)
-        return { success: false, msg: `Unable to subscribe, try again` }
     } catch (error) {
       console.log("error", error)
     }
