@@ -1,7 +1,6 @@
 const { queryConstructor } = require("../../utils")
 const { ModuleFailure, ModuleSuccess } = require("./module.messages")
 const { ModuleRepository } = require("./module.repository")
-const DOMPurify = require("dompurify")
 const mongoose = require("mongoose")
 const { AdminRepository } = require("../admin/admin.repository")
 const {
@@ -124,15 +123,13 @@ class ModuleService {
       moduleVideo = await videoChunkUpload("moduleVideo", payload)
     }
 
-    // Sanitize HTML content using DOMPurify
-    const sanitizedHTML = DOMPurify.sanitize(note)
     const module = await ModuleRepository.updateModuleDetails(
       { _id: new mongoose.Types.ObjectId(params) },
       {
         $addToSet: {
           lessons: {
             title: body.title,
-            note: sanitizedHTML,
+            note: note,
             video: moduleVideo,
           },
         },
