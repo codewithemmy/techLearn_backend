@@ -225,19 +225,20 @@ class UserService {
     await user.save()
 
     try {
-      /**send otp to email or phone number*/
       const substitutional_parameters = {
-        resetOtp: randomOtp,
+        name: user.firstName,
+        email,
+        otp: randomOtp,
       }
 
       await sendMailNotification(
         email,
-        "Reset OTP",
+        "Intellio: OTP",
         substitutional_parameters,
-        "EMAIL_OTP"
+        "VERIFICATION"
       )
     } catch (error) {
-      console.log("otp error", error)
+      console.log("error", error)
     }
 
     return { success: true, msg: AuthSuccess.OTP_SENT }
