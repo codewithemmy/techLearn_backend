@@ -9,6 +9,7 @@ const {
   addLessonVideoController,
   addFreeModuleCourse,
   deleteModuleController,
+  deleteModuleLessonController,
 } = require("./module.controller")
 
 const uploadMiddleware = multerConfig.single("video")
@@ -29,6 +30,9 @@ moduleRoute.route("/").get(getModuleController)
 
 //add lesson
 moduleRoute.route("/lesson/:id").patch(uploadMiddleware, addLessonController)
+
+//delete module lesson
+moduleRoute.route("/lesson/:id").delete(deleteModuleLessonController)
 
 //add lesson video
 moduleRoute

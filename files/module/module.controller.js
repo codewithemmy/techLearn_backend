@@ -83,6 +83,17 @@ const deleteModuleController = async (req, res, next) => {
   return responseHandler(res, SUCCESS, data)
 }
 
+//delete module lessons
+const deleteModuleLessonController = async (req, res, next) => {
+  const [error, data] = await manageAsyncOps(
+    ModuleService.deleteModuleLesson(req.params.id)
+  )
+
+  if (error) return next(error)
+  if (!data.success) return next(new CustomError(data.msg, BAD_REQUEST, data))
+  return responseHandler(res, SUCCESS, data)
+}
+
 module.exports = {
   createModuleController,
   getModuleController,
@@ -92,4 +103,5 @@ module.exports = {
   addLessonVideoController,
   addFreeModuleCourse,
   deleteModuleController,
+  deleteModuleLessonController,
 }

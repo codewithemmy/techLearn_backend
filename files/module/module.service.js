@@ -146,6 +146,28 @@ class ModuleService {
     }
   }
 
+  // delete lesson
+  static async deleteModuleLesson(lessonId) {
+    const lesson = await ModuleRepository.fetchOne({
+      "lessons._id": lessonId,
+    })
+    if (!lesson) return { success: false, msg: `Invalid lesson id` }
+
+    const moduleLesson = await ModuleRepository.updateModuleDetails(
+      { "lessons._id": lessonId },
+      { $pull: { lessons: { _id: lessonId } } }
+    )
+
+    if (!moduleLesson) {
+      return {
+        success: false,
+        msg: "Unable to delete lesson",
+      }
+    }
+
+    return { success: true, msg: "Lesson deleted successfully" }
+  }
+
   static async uploadLessonVideo(payload, lessonId) {
     try {
       if (!payload.file) {
