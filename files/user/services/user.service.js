@@ -19,16 +19,15 @@ const {
 
 class UserService {
   static async createUser(payload) {
-    const { email, fullName } = payload
+    const { email, fullName, username } = payload
     let validateEmail
 
     validateEmail = await UserRepository.validateUser({
-      email: email,
+      $or: [{ email: email }, { username }],
     })
 
-    let randomOtp = AlphaNumeric(4, "number")
-
     if (validateEmail) return { success: false, msg: UserFailure.EXIST }
+    let randomOtp = AlphaNumeric(4, "number")
 
     //hash password
     const user = await UserRepository.create({

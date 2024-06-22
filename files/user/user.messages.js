@@ -10,7 +10,7 @@ module.exports.UserSuccess = {
 module.exports.UserFailure = {
   CREATE: "Unable to create user",
   UPDATE: "Unable unable to update user",
-  EXIST: "User with email or phone number already exist",
+  EXIST: "User with email or username already exist",
   UPDATE: "Unable to Update",
   USER_EXIST: "User does not exist",
   DELETE: "Unable to delete",
