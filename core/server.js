@@ -4,26 +4,15 @@ const path = require("path")
 const connectToDatabase = require("./db")
 const { config } = require("./config")
 
-
-const httpServer = require("http").Server(app)
-// const { socketConnection } = require("../files/messages/sockets");
-
 dotenv.config({ path: path.join(__dirname, "../.env") })
 
 const port = config.PORT || 5500
 
-const io = require("socket.io")(httpServer, {
-  cors: {
-    origin: "*",
-  },
-})
-
 const startServer = () => {
-  // socketConnection(io);
-  application(io)
+  application()
   connectToDatabase()
 
-  httpServer.listen(port, () => {
+  app.listen(port, () => {
     console.log(`Intellio Academy is running on port ${port}`)
   })
 

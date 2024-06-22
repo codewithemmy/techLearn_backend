@@ -12,7 +12,7 @@ const passport = require("passport")
 
 const app = express()
 
-const application = (io) => {
+const application = () => {
   app.use(express.json())
   app.use(express.urlencoded({ extended: false }))
   app.use(helmet())
@@ -34,7 +34,6 @@ const application = (io) => {
 
   //app
   app.use((req, res, next) => {
-    res.io = io
     next()
   })
 
