@@ -20,6 +20,8 @@ const {
   NotificationRepository,
 } = require("../../files/notification/notification.repository")
 
+const { sendMailNotification } = require("../../utils/email")
+
 class PaystackPaymentService {
   paymentRequestHandler = RequestHandler.setup({
     baseURL: config.PAYSTACK_URL,
