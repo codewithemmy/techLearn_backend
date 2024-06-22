@@ -63,6 +63,9 @@ const userSchema = new mongoose.Schema(
     level: {
       type: String,
     },
+    referral: {
+      type: String,
+    },
     enrollmentStatus: {
       type: String,
       enum: ["active", "inactive"],
