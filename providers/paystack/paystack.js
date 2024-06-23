@@ -22,6 +22,7 @@ const {
 
 const { sendMailNotification } = require("../../utils/email")
 
+//paystack service
 class PaystackPaymentService {
   paymentRequestHandler = RequestHandler.setup({
     baseURL: config.PAYSTACK_URL,
@@ -75,7 +76,7 @@ class PaystackPaymentService {
       data: {
         amount: modifiedAmount,
         email,
-        callback_url: callbackUrl,
+        callback_url: "https://user.intellio.academy/",
       },
     })
 
