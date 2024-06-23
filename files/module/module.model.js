@@ -18,6 +18,7 @@ const courseModuleSchema = new mongoose.Schema(
         title: { type: String },
         note: { type: String },
         video: { type: String },
+        videoLink: { type: String },
       },
     ],
     courseId: {
