@@ -219,12 +219,14 @@ class ModuleService {
   //adding free course with module
   static async addFreeModuleCourse(payload) {
     const { body } = payload
+    const { videoLink } = body
     let moduleVideo
     if (payload && payload.file) {
       moduleVideo = await videoChunkUpload("moduleVideo", payload)
     }
     const video = {
       video: moduleVideo,
+      videoLink,
     }
     const module = await ModuleRepository.create({
       title: body.title,
