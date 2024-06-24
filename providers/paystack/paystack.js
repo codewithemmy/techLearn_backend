@@ -76,7 +76,7 @@ class PaystackPaymentService {
       data: {
         amount: modifiedAmount,
         email,
-        callback_url: "https://user.intellio.academy",
+        callback_url: "https://user.intellio.academy/login",
       },
     })
 
